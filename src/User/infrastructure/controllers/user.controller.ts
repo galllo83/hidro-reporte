@@ -10,6 +10,7 @@ import {
   Query,
   DefaultValuePipe,
   ParseIntPipe,
+  ParseUUIDPipe,
   UseGuards,
 } from '@nestjs/common';
 import { UpdateUserDto } from '../../application/dto/update-user.dto';
@@ -77,7 +78,7 @@ export class UserController {
   @ApiResponse({ status: 200, description: 'The user has been found.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   @ApiResponse({ status: 404, description: 'User not found.' })
-  async findById(@Param('id') id: string): Promise<User> {
+  async findById(@Param('id', ParseUUIDPipe) id: string): Promise<User> {
     return this.userService.findById(id);
   }
 
@@ -106,7 +107,7 @@ export class UserController {
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   @ApiResponse({ status: 403, description: 'Forbidden - Admin only.' })
   async update(
-    @Param('id') id: string,
+    @Param('id', ParseUUIDPipe) id: string,
     @Body() updateUserDto: UpdateUserDto,
   ): Promise<void> {
     return this.userService.update(id, updateUserDto);
@@ -118,7 +119,7 @@ export class UserController {
   @ApiResponse({ status: 200, description: 'The user has been deleted.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   @ApiResponse({ status: 403, description: 'Forbidden - Admin only.' })
-  async delete(@Param('id') id: string): Promise<void> {
+  async delete(@Param('id', ParseUUIDPipe) id: string): Promise<void> {
     return this.userService.delete(id);
   }
 }

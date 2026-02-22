@@ -1,10 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsString, MinLength } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsString, MinLength, ValidateNested } from 'class-validator';
+import { Type } from 'class-transformer';
 import { AddressDto } from '../../../User/application/dto/address.dto';
 
 export class RegisterDto {
     @ApiProperty({ example: 'Ulises', description: 'User name' })
     @IsString()
+    @IsNotEmpty()
     readonly name: string;
 
     @ApiProperty({ example: 'ulisesnm@gmail.com', description: 'User email' })
@@ -17,5 +19,7 @@ export class RegisterDto {
     readonly password: string;
 
     @ApiProperty({ example: AddressDto, description: 'User address' })
+    @ValidateNested()
+    @Type(() => AddressDto)
     readonly address: AddressDto;
 }

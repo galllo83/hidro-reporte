@@ -1,4 +1,4 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException, ConflictException } from '@nestjs/common';
 import { User } from '../../domain/entities/user.model';
 import { UpdateUserDto } from '../dto/update-user.dto';
 import { CreateUserDto } from '../dto/create-user.dto';
@@ -25,23 +25,35 @@ export class UserService implements IUserService {
 
   async findById(id: string): Promise<User> {
     const user = await this.userRepository.findById(id);
-    if (!user) throw new NotFoundException();
+    if (!user) throw new NotFoundException('User not found');
     return user;
   }
 
   async create(createUserDto: CreateUserDto): Promise<void> {
+    const existing = await this.userRepository.findByEmail(createUserDto.email);
+    if (existing) {
+      throw new ConflictException('Email already registered');
+    }
     return this.userRepository.create(createUserDto);
   }
 
   async update(id: string, updateUserDto: UpdateUserDto): Promise<void> {
     const user = await this.userRepository.findById(id);
-    if (!user) throw new NotFoundException();
+    if (!user) throw new NotFoundException('User not found');
+
+    if (updateUserDto.email && updateUserDto.email !== user.email) {
+      const existing = await this.userRepository.findByEmail(updateUserDto.email);
+      if (existing) {
+        throw new ConflictException('Email already in use');
+      }
+    }
+
     return this.userRepository.update(id, updateUserDto);
   }
 
   async delete(id: string): Promise<void> {
     const user = await this.userRepository.findById(id);
-    if (!user) throw new NotFoundException();
+    if (!user) throw new NotFoundException('User not found');
     return this.userRepository.delete(id);
   }
 }

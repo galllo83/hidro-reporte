@@ -29,7 +29,9 @@ export class UserRepository implements IUserRepository {
     options: IPaginationOptions,
   ): Promise<Pagination<User>> {
     const queryBuilder = this.ormRepository.createQueryBuilder('u');
-    queryBuilder.orderBy(sortBy, order);
+    const sortField = sortBy || UserSortParamsEnum.CREATED_AT;
+    const sortOrder = order || OrderParamsEnum.ASC;
+    queryBuilder.orderBy(`u.${sortField}`, sortOrder);
     const paginatedResult = await paginate<UserOrmEntity>(
       queryBuilder,
       options,
