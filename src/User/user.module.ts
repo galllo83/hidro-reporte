@@ -4,6 +4,7 @@ import { UserService } from './application/services/user.service';
 import { UserOrmEntity } from './infrastructure/entities/user.orm-entity';
 import { UserController } from './infrastructure/controllers/user.controller';
 import { UserRepository } from './infrastructure/repositories/user.repository';
+import { DatabaseSeeder } from './infrastructure/seeders/database.seeder';
 
 @Module({
   imports: [TypeOrmModule.forFeature([UserOrmEntity])],
@@ -17,6 +18,7 @@ import { UserRepository } from './infrastructure/repositories/user.repository';
       provide: 'IUserRepository',
       useClass: UserRepository,
     },
+    DatabaseSeeder,
   ],
   exports: ['IUserRepository'],
 })
