@@ -8,8 +8,8 @@ export const CONFIG_DATABASE = () =>
     port: parseInt(process.env.DB_PORT, 10) || 5432,
     username: process.env.DB_USERNAME || 'ulises',
     password: process.env.DB_PASSWORD || '',
-    database: process.env.DB_NAME || 'crud_hexagonal',
+    database: process.env.DB_NAME || 'hidro_reporte',
     autoLoadEntities: true,
-    synchronize: true,
+    synchronize: process.env.NODE_ENV !== 'production',
     namingStrategy: new SnakeNamingStrategy(),
   });

@@ -13,7 +13,7 @@ export class UserMapper {
 
     if (entity.address) {
       const address = new Address();
-      const addr = entity.address as any;
+      const addr = entity.address;
       address.street = addr.street;
       address.number = addr.number;
       address.city = addr.city;
@@ -33,7 +33,7 @@ export class UserMapper {
     if (user.id) entity.id = user.id;
     entity.name = user.name;
     entity.email = user.email;
-    entity.address = user.address as any;
+    entity.address = user.address as unknown as Record<string, string>;
     entity.createdAt = user.createdAt;
     entity.updatedAt = user.updatedAt;
     entity.deletedAt = user.deletedAt;

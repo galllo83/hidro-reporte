@@ -5,6 +5,7 @@ import { CreateUserDto } from '../../application/dto/create-user.dto';
 import { UpdateUserDto } from '../../application/dto/update-user.dto';
 import { IUserRepository } from '../../application/ports/out/user-repository.interface';
 import { User } from '../../domain/entities/user.model';
+import { UserCredentials } from '../../domain/entities/user-credentials.model';
 import { UserOrmEntity } from '../entities/user.orm-entity';
 import { UserMapper } from '../mappers/user.mapper';
 import {
@@ -56,7 +57,7 @@ export class UserRepository implements IUserRepository {
 
   async findByEmailWithPassword(
     email: string,
-  ): Promise<{ id: string; email: string; password: string; role: string } | null> {
+  ): Promise<UserCredentials | null> {
     const entity = await this.ormRepository.findOneBy({ email });
     if (!entity) return null;
     return {

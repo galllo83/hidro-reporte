@@ -26,7 +26,7 @@ export class UserOrmEntity {
   role: Role;
 
   @Column({ type: 'json', nullable: false })
-  address: JSON;
+  address: Record<string, string>;
 
   @CreateDateColumn()
   createdAt: Date;
