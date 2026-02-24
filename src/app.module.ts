@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { UserModule } from './User/user.module';
-import { AuthModule } from './Auth/auth.module';
+import { UserModule } from './modules/user/user.module';
+import { AuthModule } from './modules/auth/auth.module';
 import { CONFIG_DATABASE } from './helpers/config-database';
 import { ConfigModule } from '@nestjs/config';
 
@@ -11,4 +11,4 @@ import { ConfigModule } from '@nestjs/config';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule { }
+export class AppModule {}

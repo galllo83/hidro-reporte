@@ -1,0 +1,345 @@
+UNIVERSIDAD POLITÉCNICA DE 
+PACHUCA 
+  
+  
+ 
+  
+  
+Sistema de Inferencia de estado operativo de la red hidráulica 
+urbana mediante inteligencia colectiva 
+ 
+Desarrollado por:  
+ ULISES NUÑEZ MORENO 
+ 
+Docente:  
+DR. JORGE ALBERTO RUIZ VANOYE 
+ 
+ 
+Febrero 2026 
+
+Descripción del Problema 
+En la zona metropolitana de Pachuca y municipios aledaños (como Zempoala), el 
+tandeo es irregular. A veces CAASIM abre la válvula, pero por falta de presión no 
+llega a casas altas. Actualmente, la única forma de saber si hay agua es abrir la 
+llave o preguntar en grupos de WhatsApp vecinales. El sistema busca automatizar 
+ese ‘aviso vecinal. 
+La operación de las válvulas que controlan este flujo es mayoritariamente manual y 
+carece de instrumentación telemétrica (sensores IoT) debido a su alto costo de 
+implementación. 
+Afectados  
+Esta situación afecta directamente a los  ciudadanos de colonias vulnerables, 
+quienes viven en incertidumbre sobre los horarios reales de servicio, y a 
+los organismos operadores  (como CAASIM o comités locales), que carecen de 
+visibilidad en tiempo real sobr e si las válvulas fueron abiertas correctamente o si 
+existen fallos operativos (error humano). 
+Causas Principales: 
+1. Infraestructura obsoleta: Redes hidráulicas antiguas sin capacidad de 
+monitoreo remoto. 
+2. Opacidad en la información: Falta de comunicación efectiva entre el 
+operador y el usuario final. 
+3. Dependencia del factor humano: Errores en la apertura/cierre de válvulas 
+manuales que no son detectados hasta que la población presenta quejas 
+masivas. 
+Justificación 
+Abordar este problema mediante infraestructura física (sensores) es muy costoso 
+para el presupuesto actual . Sin embargo, una solución de software basada 
+en crowdsourcing ( colaboración masiva)  permite utilizar a los ciudadanos como 
+"sensores humanos". Al recolectar y procesar reportes simples desde dispositivos 
+móviles, se puede generar información de alto valor (inferencia de estados) con un 
+costo de implementación marginal. 
+Alcance General 
+El sistema abarcará una aplicación móvil (PWA) para la captura de reportes 
+ciudadanos en una zona piloto y un tablero de control web que procesará estos 
+datos para visualizar el estado lógico de las válvulas en tiempo real. 
+Objetivos del Proyecto 
+Objetivo General: Desarrollar un sistema de monitoreo indirecto para la gestión 
+hídrica que, mediante la recolección de reportes ciudadanos geolocalizados 
+(Crowdsourcing) y un algoritmo de inferencia, permita visualizar en tiempo real el 
+estado operativo de las válvulas de distribución de agua en zonas de tandeo. 
+Objetivos Específicos: 
+1. Implementar una Aplicación Web Progresiva (PWA)  que funcione como 
+herramienta de captación de datos, permitiendo a los ciudadanos reportar 
+suministro y fugas de forma georreferenciada. 
+2. Desarrollar un motor de inferencia lógica en el backend que correlacione 
+múltiples reportes en una misma zona geográfica para determinar el estado 
+(Abierto/Cerrado) de las válvulas sin necesidad de sensores físicos. 
+3. Construir un Tablero de Control (Dashboard)  para la visualización de 
+datos espaciales, que facilite la toma de decisiones operativas y la detección 
+de anomalías en el servicio. 
+ 
+Relación del problema con el desarrollo sustentable 
+Para fines de este proyecto, entendemos el desarrollo sustentable no solo como el 
+cuidado ecológico, sino como el equilibrio donde la tecnología permite gestionar el 
+agua (ambiental) de forma justa para los vecinos (social) sin que represente un 
+gasto impagable para el municipio (económico). 
+Dimensiones Involucradas 
+Social (equidad) El sistema busca reducir la brecha de información, permitiendo 
+que los vecinos tengan datos reales para documentar la calidad y frecuencia de su 
+servicio, promoviendo un acceso más justo al recurso. 
+Ambiental ( eficiencia): Al detectar fugas y patrones de desperdicio de manera 
+temprana, se contribuye directamente a la preservación del recurso hídrico. 
+Económica (optimización): Permite a los organismos operadores reducir costos 
+operativos al dirigir cuadrillas de reparación de forma eficiente basada en datos 
+geolocalizados. 
+ 
+ 
+Relación con los objetivos de desarrollo sostenible (ODS) 
+El proyecto se alinea directamente con el  ODS 6: Agua limpia y saneamiento, 
+específicamente con la  meta 6.4 (uso eficiente de recursos hídricos)  y la meta 6.b 
+(participación de las comunidades en la gestión del agua). 
+Impacto Esperado: 
+Corto Plazo: Transparencia inmediata sobre el estado del servicio en la zona 
+piloto. 
+Largo Plazo: Generación de una base de datos histórica que permita auditar la 
+eficiencia del tandeo y justificar inversiones en infraestructura física donde más 
+se necesite. 
+Justificación de la Contribución a la Sustentabilidad 
+El software "Hidro-Reporte" contribuye directamente a la sustentabilidad  ambiental 
+y social al optimizar la gestión del recurso hídrico mediante la detección temprana 
+de anomalías. Al geolocalizar fugas y monitorear el suministro real mediante 
+inteligencia colectiva, el sistema reduce los tiempos de respuesta ante el 
+desperdicio de agua ( eficiencia hídrica) y democratiza el acceso a la información, 
+permitiendo que las comunidades vulnerables gestionen su consumo con equidad 
+y transparencia, alineándose con las metas del ODS 6. 
+Desde la perspectiva económica, la solución promueve la sustentabilidad al sustituir 
+la inversión en costosa infraestructura de sensores físicos por un modelo de 
+"sensores ciudadanos" (Crowdsourcing). Esto permite a los organismos operadores 
+auditar la red y optimizar la logística de sus cuadrillas sin generar deuda técnica ni 
+residuos electrónicos, logrando una gestión inteligente del agua viable, escalable y 
+de bajo impacto ecológico. 
+ 
+Propuesta de solución de software 
+Se propone el desarrollo del sistema  "Hidro-Reporte", una plataforma de 
+monitoreo indirecto. El software utiliza un algoritmo de inferencia que correlaciona 
+múltiples reportes ciudadanos en tiempo y espacio para determinar virtualmente si 
+una válvula está abierta o cerrada, sin tocar la infraestructura física. 
+Tipo de Sistema:  Sistema Web Progresivo (PWA) con arquitectura Cliente -
+Servidor y capacidades Geoespaciales. 
+ 
+Actores Principales: 
+1. Ciudadano: Usuario recolector de datos. 
+2. Administrador (Operador): Usuario tomador de decisiones. 
+3. Sistema (Backend): Actor lógico que procesa la información. 
+Beneficios 
+Ciudadano: Certeza sobre el servicio y un canal directo para reportar incidencias. 
+Administrador: Un "Gemelo Digital" de bajo costo que le permite visualizar la 
+operación de la red en un mapa en tiempo real. 
+ 
+Historias de usuario 
+Fase 1: Infraestructura y Seguridad (Días 1-11) 
+Prioridad: Alta 
+ID Historia de 
+Usuario Descripción Quién Días Herramientas 
+HU
+-01 
+Setup 
+Infraestructu
+ra Espacial 
+Como Desarrollador, quiero configur
+ar PostgreSQL con la extensión 
+PostGIS, para procesar 
+coordenadas y polígonos 
+geográficos. (Seguridad) 
+Backend 
+/ DBA 3.0 
+Docker, 
+PostgreSQL, 
+PostGIS 
+
+ID Historia de 
+Usuario Descripción Quién Días Herramientas 
+HU
+-02 
+Autenticació
+n Admin 
+(JWT) 
+Como Administrador, quiero iniciar 
+sesión de forma 
+segura, para acceder al dashboard y 
+proteger la manipulación de las 
+válvulas.  
+Fullstack 3.0 
+NestJS 
+Passport, JWT, 
+React 
+HU
+-03 
+Gestión de 
+Zonas 
+(Polígonos) 
+Como Administrador, quiero dibujar 
+zonas en el mapa 
+interactivo, para delimitar qué área 
+geográfica corresponde a cada 
+válvula. 
+Frontend 
+/ Back 3.0 
+Google Maps 
+Drawing, 
+TypeORM 
+HU
+-04 
+Registro de 
+Ciudadanos 
+Como Ciudadano, quiero registrarm
+e con datos básicos, para enviar 
+reportes asociados a mi identidad y 
+evitar el anonimato. (Control) 
+Fullstack 2.0 React Forms, 
+NestJS Auth 
+ 
+Fase 2: Lógica del Negocio "Core" (Días 12-23) 
+Prioridad: Media 
+ID Historia de 
+Usuario Descripción Quién Días Herramientas 
+HU-
+05 
+Reporte de 
+suministro 
+(App) 
+Como Ciudadano, quiero un botón 
+para reportar "Llegó el 
+agua", para informar el 
+restablecimiento del servicio con mi 
+GPS. 
+Mobile 
+Dev 2.0 Geolocation 
+API, Axios 
+HU-
+06 
+Asignación 
+espacial 
+automática 
+Como Sistema, quiero detectar en 
+qué polígono cae un reporte GPS, 
+para asignarlo a la válvula correcta 
+sin intervención manual.  
+Backend 3.0 PostGIS 
+(ST_Contains) 
+HU-
+07 
+Motor de 
+inferencia 
+(Algoritmo) 
+Como Sistema, quiero validar si una 
+válvula está "ABIERTA" basándome 
+en la frecuencia de 
+reportes, para inferir el estado real. 
+Backend 4.0 TypeScript, 
+CronJobs 
+HU-
+08 
+Dashboard 
+en tiempo 
+real 
+Como Administrador, quiero ver un 
+mapa que cambie de color 
+(verde/rojo), para monitorear el 
+estado operativo de la red. 
+Fullstack 3.0 
+Google Maps 
+JS API, React 
+Components, 
+GeoJSON 
+ 
+ 
+Fase 3: Complementos y demo (Días 24-30) 
+Prioridad: Baja 
+ID Historia de 
+Usuario Descripción Quién Días Herramientas 
+HU
+-09 
+Reporte fin 
+de 
+suministro 
+Como Ciudadano, quiero reportar 
+cuando se va el agua, para que el 
+sistema calcule la duración del 
+tandeo. (Sustentabilidad) 
+Frontend 1.0 Api reutilizable 
+HU
+-10 
+Reporte de 
+fugas 
+Como Ciudadano, quiero reportar 
+fugas ubicándolas en el 
+mapa, para alertar sobre el 
+desperdicio del recurso. 
+(Sustentabilidad) 
+Fullstack 1.5 React uploads, 
+Maps 
+HU
+-11 
+Historial 
+personal 
+Como Usuario, quiero ver mis 
+reportes pasados, para llevar un 
+control de mi actividad. 
+Frontend 1.0 List component 
+HU
+-12 
+Gráficas de 
+rendimiento 
+Como Administrador, quiero ver 
+gráficos de barras por 
+colonia, para identificar zonas con 
+desperdicio o inequidad en el 
+reparto. (Sustentabilidad) 
+Frontend 1.5 Chart.js/Rechart
+s 
+HU
+-13 
+Datos de 
+prueba 
+(script) 
+Como Desarrollador, quiero ejecutar 
+un script que simule 50 
+reportes, para demostrar el 
+funcionamiento del algoritmo en la 
+presentación. 
+Backend 1.0 Script 
+SQL/NestJS 
+HU
+-14 
+Vista de lista 
+de válvulas 
+Como Administrador, quiero ver una 
+tabla simple con el estado de las 
+válvulas, para tener una alternativa 
+si el mapa falla. 
+Frontend 0.5 Table 
+Component 
+HU
+-15 
+Conectivida
+d móvil 
+(Ngrok) 
+Como Desarrollador, quiero configur
+ar un túnel seguro a mi 
+localhost, para conectar mi celular 
+físico durante la demo. 
+DevOps 0.5 Ngrok/Firewall 
+Para la clasificación de las historias  de usuario se utilizó el método MoSCoW 
+simplificado en tres niveles   (alta, media, baja), basándose en la dependencia 
+técnica y el valor aportado al problema central: 
+Prioridad Alta (Must Have):  Incluye la infraestructura base (BD Espacial), la 
+seguridad de acceso y el flujo principal de "Captura de datos -> Inferencia -> 
+Visualización". Sin estas historias, el sistema no cumple su propósito fundamental 
+de monitoreo. 
+Prioridad Media (Should Have):  Incluye validaciones de calidad de datos 
+(Geofencing) y elementos de sustentabilidad (Cálculo de duración del tandeo). Son 
+vitales para la fidelidad del sistema pero pueden posponerse ligeramente tras el 
+MVP. 
+Prioridad Baja (Could Have):  Incluye reportes históricos y visualizaciones 
+alternativas. Aportan valor analítico a largo plazo, pero no impiden el funcionamiento 
+operativo del software en una primera fase. 
+ 
+Conclusiones 
+El análisis de requisitos fue clave para aterrizar el problema. Pasamos de una idea 
+vaga (“falta de agua”) a funciones programables. Las historias de usuario nos 
+permitieron entender qué dato necesitamos realmente pedirle al ciudadano.  
+El software tiene un rol protagónico en el desarrollo sustentable. Al digitalizar la 
+gestión hídrica mediante inteligencia colectiva, no solo se optimiza un proceso 
+técnico, sino que se democratiza la información, empoderando a la sociedad para 
+participar activamente en la gestión responsable de sus recursos naturales, 
+cumpliendo así con la visión de los PRONACES. 
