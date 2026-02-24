@@ -1,5 +1,6 @@
-import { Controller, Post, Body, Inject, HttpCode } from '@nestjs/common';
-import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Controller, Post, Body, Inject, HttpCode, Get, UseGuards, Request } from '@nestjs/common';
+import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 import { LoginDto } from '../../application/dto/login.dto';
 import { RegisterDto } from '../../application/dto/register.dto';
 import { IAuthService } from '../../application/ports/in/auth-service.interface';
@@ -10,7 +11,7 @@ export class AuthController {
   constructor(
     @Inject('IAuthService')
     private readonly authService: IAuthService,
-  ) {}
+  ) { }
 
   @Post('register')
   @ApiResponse({
@@ -40,5 +41,17 @@ export class AuthController {
   })
   async login(@Body() loginDto: LoginDto): Promise<{ accessToken: string }> {
     return this.authService.login(loginDto);
+  }
+
+  @Get('me')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiResponse({
+    status: 200,
+    description: 'Returns the current user profile based on JWT.',
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized.' })
+  getProfile(@Request() req: any) {
+    return req.user;
   }
 }
