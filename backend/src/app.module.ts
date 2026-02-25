@@ -3,12 +3,13 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from './modules/user/user.module';
 import { AuthModule } from './modules/auth/auth.module';
+import { ZoneModule } from './modules/zone/zone.module';
 import { CONFIG_DATABASE } from './helpers/config-database';
 import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports: [ConfigModule.forRoot(), CONFIG_DATABASE(), UserModule, AuthModule],
+  imports: [ConfigModule.forRoot(), CONFIG_DATABASE(), UserModule, AuthModule, ZoneModule],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule { }
