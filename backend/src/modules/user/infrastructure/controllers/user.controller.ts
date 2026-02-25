@@ -21,9 +21,9 @@ import { ApiBearerAuth, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Pagination } from 'nestjs-typeorm-paginate';
 import { UserSortParamsEnum } from '../../../../helpers/enums/userParamsEnum';
 import { OrderParamsEnum } from '../../../../helpers/enums/orderParamsEnum';
-import { JwtAuthGuard } from '../../../Auth/infrastructure/guards/jwt-auth.guard';
-import { RolesGuard } from '../../../Auth/infrastructure/guards/roles.guard';
-import { Roles } from '../../../Auth/infrastructure/decorators/roles.decorator';
+import { JwtAuthGuard } from '../../../auth/infrastructure/guards/jwt-auth.guard';
+import { RolesGuard } from '../../../auth/infrastructure/guards/roles.guard';
+import { Roles } from '../../../auth/infrastructure/decorators/roles.decorator';
 import { Role } from '../../../../helpers/enums/role.enum';
 
 @ApiTags('User')
@@ -34,7 +34,7 @@ export class UserController {
   constructor(
     @Inject('IUserService')
     private readonly userService: IUserService,
-  ) {}
+  ) { }
 
   @Get()
   @ApiResponse({ status: 200, description: 'The user has been found.' })

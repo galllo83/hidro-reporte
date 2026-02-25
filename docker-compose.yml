@@ -10,9 +10,42 @@ services:
       POSTGRES_DB: ${DB_NAME:-hidro_reporte}
       POSTGRES_HOST_AUTH_METHOD: trust
     ports:
-      - "${DB_PORT:-5432}:5432"
+      - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: hidro_reporte_backend
+    restart: always
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USERNAME: ${DB_USERNAME:-ulises}
+      DB_PASSWORD: ${DB_PASSWORD:-}
+      DB_NAME: ${DB_NAME:-hidro_reporte}
+      JWT_SECRET: ${JWT_SECRET:-mi-clave-secreta-hexagonal-2026}
+      JWT_EXPIRATION: ${JWT_EXPIRATION:-86400}
+      PORT: 3000
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: http://localhost:3000/api
+    container_name: hidro_reporte_frontend
+    restart: always
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
 
 volumes:
   pgdata:

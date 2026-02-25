@@ -9,7 +9,7 @@ import * as bcrypt from 'bcrypt';
 import { IAuthService } from '../ports/in/auth-service.interface';
 import { RegisterDto } from '../dto/register.dto';
 import { LoginDto } from '../dto/login.dto';
-import { IUserRepository } from '../../../User/application/ports/out/user-repository.interface';
+import { IUserRepository } from '../../../user/application/ports/out/user-repository.interface';
 
 @Injectable()
 export class AuthService implements IAuthService {
@@ -17,7 +17,7 @@ export class AuthService implements IAuthService {
     @Inject('IUserRepository')
     private readonly userRepository: IUserRepository,
     private readonly jwtService: JwtService,
-  ) {}
+  ) { }
 
   async register(dto: RegisterDto): Promise<{ accessToken: string }> {
     const existingUser = await this.userRepository.findByEmail(dto.email);

@@ -7,7 +7,7 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import { AddressDto } from '../../../User/application/dto/address.dto';
+import { AddressDto } from '../../../user/application/dto/address.dto';
 
 export class RegisterDto {
   @ApiProperty({ example: 'Ulises', description: 'User name' })
