@@ -18,9 +18,4 @@ export interface RegisterCredentials {
     name: string;
     email: string;
     password: string;
-    address: {
-        street: string;
-        city: string;
-        postalCode?: string;
-    };
 }

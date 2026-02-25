@@ -4,10 +4,7 @@ import {
   IsNotEmpty,
   IsString,
   MinLength,
-  ValidateNested,
 } from 'class-validator';
-import { Type } from 'class-transformer';
-import { AddressDto } from '../../../user/application/dto/address.dto';
 
 export class RegisterDto {
   @ApiProperty({ example: 'Ulises', description: 'User name' })
@@ -26,9 +23,4 @@ export class RegisterDto {
   @IsString()
   @MinLength(6)
   readonly password: string;
-
-  @ApiProperty({ example: AddressDto, description: 'User address' })
-  @ValidateNested()
-  @Type(() => AddressDto)
-  readonly address: AddressDto;
 }

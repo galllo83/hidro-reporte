@@ -29,7 +29,6 @@ export class AuthService implements IAuthService {
       name: dto.name,
       email: dto.email,
       password: dto.password,
-      address: dto.address,
     });
 
     const newUser = await this.userRepository.findByEmail(dto.email);

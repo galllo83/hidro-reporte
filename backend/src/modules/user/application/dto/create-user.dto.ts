@@ -26,9 +26,4 @@ export class CreateUserDto {
   @IsString()
   @MinLength(6)
   readonly password: string;
-
-  @ApiProperty({ example: AddressDto, description: 'User address' })
-  @ValidateNested()
-  @Type(() => AddressDto)
-  readonly address: AddressDto;
 }

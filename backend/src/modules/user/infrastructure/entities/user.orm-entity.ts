@@ -25,7 +25,7 @@ export class UserOrmEntity {
   @Column({ type: 'enum', enum: Role, default: Role.USER })
   role: Role;
 
-  @Column({ type: 'json', nullable: false })
+  @Column({ type: 'json', nullable: true })
   address: Record<string, string>;
 
   @CreateDateColumn()

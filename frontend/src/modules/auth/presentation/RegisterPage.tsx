@@ -10,21 +10,13 @@ export const RegisterPage = () => {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [street, setStreet] = useState('');
-    const [city, setCity] = useState('');
-    const [postalCode, setPostalCode] = useState('');
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         const user = await register({
             name,
             email,
-            password,
-            address: {
-                street,
-                city,
-                postalCode
-            }
+            password
         });
 
         if (user) {
@@ -122,51 +114,6 @@ export const RegisterPage = () => {
                             onChange={(e) => setPassword(e.target.value)}
                             className="w-full h-[45px] bg-[#1a2333]/40 border-[1.5px] border-cyan-600/60 rounded-[10px] pl-11 pr-4 text-white text-[13px] placeholder:text-white/40 focus:outline-none focus:border-cyan-400 focus:bg-[#1a2333]/60 focus:shadow-[0_0_15px_rgba(34,211,238,0.2)] transition-all"
                         />
-                    </div>
-
-                    <div className="h-[1px] w-full bg-cyan-500/20 my-2" />
-
-                    {/* Street Input */}
-                    <div className="relative group">
-                        <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-white/40 group-focus-within:text-cyan-400 transition-colors">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /><polyline points="9 22 9 12 15 12 15 22" /></svg>
-                        </div>
-                        <input
-                            type="text"
-                            required
-                            placeholder="Dirección (Calle y Número)"
-                            value={street}
-                            onChange={(e) => setStreet(e.target.value)}
-                            className="w-full h-[45px] bg-[#1a2333]/40 border-[1.5px] border-cyan-600/60 rounded-[10px] pl-11 pr-4 text-white text-[13px] placeholder:text-white/40 focus:outline-none focus:border-cyan-400 focus:bg-[#1a2333]/60 focus:shadow-[0_0_15px_rgba(34,211,238,0.2)] transition-all"
-                        />
-                    </div>
-
-                    <div className="flex gap-4">
-                        {/* City Input */}
-                        <div className="relative group flex-1">
-                            <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-white/40 group-focus-within:text-cyan-400 transition-colors">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="10" r="3" /><path d="M12 21.7C17.3 17 20 13 20 10a8 8 0 1 0-16 0c0 3 2.7 7 8 11.7z" /></svg>
-                            </div>
-                            <input
-                                type="text"
-                                required
-                                placeholder="Colonia/Ciudad"
-                                value={city}
-                                onChange={(e) => setCity(e.target.value)}
-                                className="w-full h-[45px] bg-[#1a2333]/40 border-[1.5px] border-cyan-600/60 rounded-[10px] pl-11 pr-4 text-white text-[13px] placeholder:text-white/40 focus:outline-none focus:border-cyan-400 focus:bg-[#1a2333]/60 focus:shadow-[0_0_15px_rgba(34,211,238,0.2)] transition-all"
-                            />
-                        </div>
-
-                        {/* Postal Code Input */}
-                        <div className="relative group w-[100px]">
-                            <input
-                                type="text"
-                                placeholder="C.P."
-                                value={postalCode}
-                                onChange={(e) => setPostalCode(e.target.value)}
-                                className="w-full h-[45px] bg-[#1a2333]/40 border-[1.5px] border-cyan-600/60 rounded-[10px] px-4 text-white text-[13px] placeholder:text-white/40 focus:outline-none focus:border-cyan-400 focus:bg-[#1a2333]/60 focus:shadow-[0_0_15px_rgba(34,211,238,0.2)] transition-all text-center"
-                            />
-                        </div>
                     </div>
 
                     {/* Action Button */}
