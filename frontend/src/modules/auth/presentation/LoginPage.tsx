@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useLogin } from '../application/useLogin';
 import mockupBg from '../../../assets/images/mockup-bg.png';
 
@@ -120,7 +120,7 @@ export const LoginPage = () => {
                         ¿Olvidaste tu contraseña?
                     </a>
                     <div className="text-white/50">
-                        ¿No tienes cuenta? <a href="#" className="text-white font-semibold hover:text-cyan-400 transition-colors cursor-pointer ml-1">Solicitar Acceso.</a>
+                        ¿No tienes cuenta? <Link to="/register" className="text-white font-semibold hover:text-cyan-400 transition-colors cursor-pointer ml-1">Regístrate aquí.</Link>
                     </div>
                 </div>
 

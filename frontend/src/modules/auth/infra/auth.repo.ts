@@ -1,8 +1,55 @@
-import type { AuthResponse, LoginCredentials, User } from '../domain/auth.types';
+import type { AuthResponse, LoginCredentials, RegisterCredentials, User } from '../domain/auth.types';
 
 export const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
 
 export const authRepository = {
+    register: async (credentials: RegisterCredentials): Promise<AuthResponse> => {
+        try {
+            // 1. Send registration payload
+            const registerRes = await fetch(`${API_URL}/auth/register`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(credentials),
+            });
+
+            if (!registerRes.ok) {
+                const errorData = await registerRes.json().catch(() => null);
+                throw new Error(errorData?.message || 'Error al registrar usuario. Intente con otro correo.');
+            }
+
+            const { accessToken } = await registerRes.json();
+
+            // Store token tentatively for the /me request
+            localStorage.setItem('auth_token', accessToken);
+
+            // 2. Fetch User Profile using the token to confirm identity
+            const meRes = await fetch(`${API_URL}/auth/me`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json',
+                }
+            });
+
+            if (!meRes.ok) {
+                localStorage.removeItem('auth_token'); // Cleanup if /me fails
+                throw new Error('Error al obtener el perfil de usuario registrado');
+            }
+
+            const user: User = await meRes.json();
+
+            return {
+                user,
+                token: accessToken
+            };
+        } catch (error: any) {
+            console.error("Auth Repository Register Error:", error);
+            throw new Error(error.message || 'Error de red durante el registro');
+        }
+    },
+
     login: async (credentials: LoginCredentials): Promise<AuthResponse> => {
         try {
             // 1. Authenticate and get JWT Token
