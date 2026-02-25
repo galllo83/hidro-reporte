@@ -1,4 +1,4 @@
-import { Injectable, Inject, NotFoundException } from '@nestjs/common';
+import { Injectable, Inject, NotFoundException, ConflictException } from '@nestjs/common';
 import { IZoneRepository } from '../ports/out/zone-repository.interface';
 import { Zone } from '../../domain/entities/zone.model';
 
@@ -10,6 +10,17 @@ export class ZoneService {
     ) { }
 
     async create(createZoneDto: any): Promise<Zone> {
+        const existingZone = await this.zoneRepository.findZoneByName(createZoneDto.name);
+        if (existingZone) {
+            throw new ConflictException(`Ya existe una zona registrada con el nombre "${createZoneDto.name}". Utilice otro nombre.`);
+        }
+
+        // Validate that the new polygon doesn't overlap with any existing zone
+        const isIntersecting = await this.zoneRepository.checkIntersection(createZoneDto.polygon);
+        if (isIntersecting) {
+            throw new ConflictException(`La zona que está intentando trazar se superpone o choca con otra válvula existente. Por favor, redibuje respetando los límites.`);
+        }
+
         const zone: Zone = {
             name: createZoneDto.name,
             polygon: createZoneDto.polygon,

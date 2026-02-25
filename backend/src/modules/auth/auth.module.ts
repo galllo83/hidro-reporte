@@ -21,7 +21,7 @@ import { UserModule } from '../user/user.module';
           'default-secret-change-me',
         ),
         signOptions: {
-          expiresIn: configService.get<number>('JWT_EXPIRATION', 86400),
+          expiresIn: parseInt(configService.get<string>('JWT_EXPIRATION', '86400'), 10),
         },
       }),
     }),
@@ -36,4 +36,4 @@ import { UserModule } from '../user/user.module';
   ],
   exports: [JwtStrategy, PassportModule],
 })
-export class AuthModule {}
+export class AuthModule { }

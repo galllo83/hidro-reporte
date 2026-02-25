@@ -30,6 +30,21 @@ export class ZoneRepository implements IZoneRepository {
         return ZoneMapper.toDomain(entity);
     }
 
+    async findZoneByName(name: string): Promise<Zone | null> {
+        const entity = await this.repository.findOne({ where: { name, is_active: true } });
+        if (!entity) return null;
+        return ZoneMapper.toDomain(entity);
+    }
+
+    async checkIntersection(polygon: any): Promise<boolean> {
+        const query = this.repository.createQueryBuilder('zone')
+            .where('zone.is_active = :isActive', { isActive: true })
+            .andWhere('ST_Intersects(zone.polygon, ST_GeomFromGeoJSON(:polygon))', { polygon: JSON.stringify(polygon) });
+
+        const count = await query.getCount();
+        return count > 0;
+    }
+
     async updateZone(id: string, zone: Partial<Zone>): Promise<Zone> {
         await this.repository.update(id, {
             ...(zone.name && { name: zone.name }),
