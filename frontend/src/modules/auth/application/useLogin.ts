@@ -20,7 +20,7 @@ export const useLogin = () => {
 
             return response.user;
         } catch (err: any) {
-            setError(err.message || 'Error occurred during login');
+            setError(err.message || 'Ocurrió un error al iniciar sesión');
             return null;
         } finally {
             setIsLoading(false);

@@ -16,7 +16,7 @@ export const authRepository = {
 
             if (!loginRes.ok) {
                 const errorData = await loginRes.json().catch(() => null);
-                throw new Error(errorData?.message || 'Invalid credentials or server error');
+                throw new Error(errorData?.message || 'Credenciales inválidas o error de servidor');
             }
 
             const { accessToken } = await loginRes.json();
@@ -35,7 +35,7 @@ export const authRepository = {
 
             if (!meRes.ok) {
                 localStorage.removeItem('auth_token'); // Cleanup if /me fails
-                throw new Error('Failed to retrieve user profile');
+                throw new Error('Error al obtener el perfil de usuario');
             }
 
             const user: User = await meRes.json();
@@ -46,7 +46,7 @@ export const authRepository = {
             };
         } catch (error: any) {
             console.error("Auth Repository Error:", error);
-            throw new Error(error.message || 'Network error during login');
+            throw new Error(error.message || 'Error de red durante el inicio de sesión');
         }
     },
 

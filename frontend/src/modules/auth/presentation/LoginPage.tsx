@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLogin } from '../application/useLogin';
-import mockupBg from '../../../assets/mockup-bg.png';
+import mockupBg from '../../../assets/images/mockup-bg.png';
 
 export const LoginPage = () => {
     const { login, isLoading, error } = useLogin();
@@ -33,7 +33,7 @@ export const LoginPage = () => {
             <div className="absolute inset-0 bg-gradient-to-b from-[#03070b]/60 to-[#03070b]/90 pointer-events-none" />
 
             {/* Main Glass Card */}
-            <div className="relative z-10 w-full max-w-[400px] rounded-[16px] bg-gradient-to-b from-[#111928]/95 to-[#0b101a]/95 backdrop-blur-2xl border border-cyan-500/30 shadow-[0_0_50px_rgba(0,212,255,0.15)] flex flex-col items-center px-8 py-10">
+            <div className="relative z-10 w-full max-w-[400px] mx-4 rounded-[16px] bg-gradient-to-b from-[#111928]/95 to-[#0b101a]/95 backdrop-blur-2xl border border-cyan-500/30 shadow-[0_0_50px_rgba(0,212,255,0.15)] flex flex-col items-center px-6 sm:px-8 py-8 sm:py-10">
 
                 {/* Specular Top Edge Glow */}
                 <div className="absolute top-0 left-[15%] right-[15%] h-[2px] bg-gradient-to-r from-transparent via-cyan-300 to-transparent shadow-[0_0_15px_rgba(34,211,238,1)] opacity-80" />
@@ -62,7 +62,7 @@ export const LoginPage = () => {
 
                 {/* Welcome Text */}
                 <h2 className="text-[14px] font-medium tracking-[0.1em] text-white/95 mb-8 uppercase">
-                    Welcome Back
+                    Bienvenido de nuevo
                 </h2>
 
                 {/* Form */}
@@ -81,7 +81,7 @@ export const LoginPage = () => {
                         <input
                             type="email"
                             required
-                            placeholder="Email Address"
+                            placeholder="Correo Electrónico"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             className="w-full h-[50px] bg-[#1a2333]/40 border-[1.5px] border-cyan-600/60 rounded-[10px] pl-11 pr-4 text-white text-[13px] placeholder:text-white/40 focus:outline-none focus:border-cyan-400 focus:bg-[#1a2333]/60 focus:shadow-[0_0_15px_rgba(34,211,238,0.2)] transition-all"
@@ -96,7 +96,7 @@ export const LoginPage = () => {
                         <input
                             type="password"
                             required
-                            placeholder="Password"
+                            placeholder="Contraseña"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             className="w-full h-[50px] bg-[#1a2333]/40 border-[1.5px] border-cyan-600/60 rounded-[10px] pl-11 pr-4 text-white text-[13px] placeholder:text-white/40 focus:outline-none focus:border-cyan-400 focus:bg-[#1a2333]/60 focus:shadow-[0_0_15px_rgba(34,211,238,0.2)] transition-all"
@@ -110,17 +110,17 @@ export const LoginPage = () => {
                         className="w-full h-[50px] mt-1 rounded-[10px] text-[#020617] font-bold text-[13px] uppercase tracking-[0.05em] shadow-[0_0_20px_rgba(0,212,255,0.5)] hover:shadow-[0_0_30px_rgba(0,212,255,0.7)] hover:brightness-110 active:scale-[0.98] transition-all flex items-center justify-center disabled:opacity-70"
                         style={{ background: 'linear-gradient(90deg, #00d2ff 0%, #00f0ff 100%)' }}
                     >
-                        {isLoading ? 'Signing In...' : 'Sign In'}
+                        {isLoading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
                     </button>
                 </form>
 
                 {/* Footer Links */}
                 <div className="mt-8 flex flex-col items-center gap-5 text-[12px]">
                     <a href="#" className="text-white/70 hover:text-white transition-colors cursor-pointer">
-                        Forgot Password?
+                        ¿Olvidaste tu contraseña?
                     </a>
                     <div className="text-white/50">
-                        Don't have an account? <a href="#" className="text-white font-semibold hover:text-cyan-400 transition-colors cursor-pointer ml-1">Request Access.</a>
+                        ¿No tienes cuenta? <a href="#" className="text-white font-semibold hover:text-cyan-400 transition-colors cursor-pointer ml-1">Solicitar Acceso.</a>
                     </div>
                 </div>
 
