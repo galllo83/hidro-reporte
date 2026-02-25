@@ -6,9 +6,10 @@ import { AuthModule } from './modules/auth/auth.module';
 import { ZoneModule } from './modules/zone/zone.module';
 import { CONFIG_DATABASE } from './helpers/config-database';
 import { ConfigModule } from '@nestjs/config';
+import { WaterServiceModule } from './modules/water-service/water-service.module';
 
 @Module({
-  imports: [ConfigModule.forRoot(), CONFIG_DATABASE(), UserModule, AuthModule, ZoneModule],
+  imports: [ConfigModule.forRoot(), CONFIG_DATABASE(), UserModule, AuthModule, ZoneModule, WaterServiceModule],
   controllers: [AppController],
   providers: [AppService],
 })

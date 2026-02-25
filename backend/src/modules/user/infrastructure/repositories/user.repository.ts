@@ -22,7 +22,7 @@ export class UserRepository implements IUserRepository {
   constructor(
     @InjectRepository(UserOrmEntity)
     private readonly ormRepository: Repository<UserOrmEntity>,
-  ) {}
+  ) { }
 
   async findAll(
     sortBy: UserSortParamsEnum,
@@ -72,7 +72,6 @@ export class UserRepository implements IUserRepository {
     const entity = new UserOrmEntity();
     entity.name = createUserDto.name;
     entity.email = createUserDto.email;
-    entity.address = createUserDto.address as any;
 
     const salt = await bcrypt.genSalt(10);
     entity.password = await bcrypt.hash(createUserDto.password, salt);

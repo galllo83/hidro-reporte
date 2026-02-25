@@ -1,9 +1,10 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, DataSource } from 'typeorm';
 import { UserOrmEntity } from '../entities/user.orm-entity';
 import { Role } from '../../../../helpers/enums/role.enum';
 import * as bcrypt from 'bcrypt';
+import { WaterServicesSeed } from '../../../../database/seeds/water-services.seed';
 
 @Injectable()
 export class DatabaseSeeder implements OnModuleInit {
@@ -12,10 +13,12 @@ export class DatabaseSeeder implements OnModuleInit {
   constructor(
     @InjectRepository(UserOrmEntity)
     private readonly userRepository: Repository<UserOrmEntity>,
-  ) {}
+    private readonly dataSource: DataSource,
+  ) { }
 
   async onModuleInit() {
     await this.seedUsers();
+    await WaterServicesSeed.run(this.dataSource);
   }
 
   private async seedUsers() {

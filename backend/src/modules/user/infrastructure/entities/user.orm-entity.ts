@@ -5,8 +5,10 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   DeleteDateColumn,
+  OneToMany,
 } from 'typeorm';
 import { Role } from '../../../../helpers/enums/role.enum';
+import { WaterServiceOrmEntity } from '../../../water-service/infrastructure/entities/water-service.orm-entity';
 
 @Entity('users')
 export class UserOrmEntity {
@@ -27,6 +29,9 @@ export class UserOrmEntity {
 
   @Column({ type: 'json', nullable: true })
   address: Record<string, string>;
+
+  @OneToMany(() => WaterServiceOrmEntity, (waterService) => waterService.user)
+  waterServices: WaterServiceOrmEntity[];
 
   @CreateDateColumn()
   createdAt: Date;
