@@ -1,0 +1,49 @@
+import { Injectable, Inject } from '@nestjs/common';
+import { IReportService } from '../ports/in/report.interface';
+import { IReportRepository } from '../ports/out/report-repository.interface';
+import { CreateReportDto } from '../dto/create-report.dto';
+import { ReportModel } from '../../domain/entities/report.model';
+import { EntityManager } from 'typeorm';
+
+@Injectable()
+export class ReportService implements IReportService {
+    constructor(
+        @Inject('IReportRepository')
+        private readonly reportRepository: IReportRepository,
+        private readonly entityManager: EntityManager,
+    ) { }
+
+    async createReport(userId: string, dto: CreateReportDto): Promise<ReportModel> {
+        // Spatial Intersect Logic (HU-06)
+        // Find the zone that contains this point
+        const query = `
+      SELECT id 
+      FROM zones
+      WHERE ST_Contains(polygon, ST_SetSRID(ST_MakePoint($1, $2), 4326))
+      LIMIT 1;
+    `;
+
+        // PostGIS MakePoint takes (longitude, latitude)
+        const result = await this.entityManager.query(query, [dto.location.lng, dto.location.lat]);
+        let zoneId: string | null = null;
+
+        if (result && result.length > 0) {
+            zoneId = result[0].id;
+        }
+
+        return this.reportRepository.create({
+            userId,
+            zoneId,
+            type: dto.type,
+            location: dto.location,
+        });
+    }
+
+    async getReportsByZone(zoneId: string): Promise<ReportModel[]> {
+        return this.reportRepository.findByZone(zoneId);
+    }
+
+    async getAllReports(): Promise<ReportModel[]> {
+        return this.reportRepository.findAll();
+    }
+}
