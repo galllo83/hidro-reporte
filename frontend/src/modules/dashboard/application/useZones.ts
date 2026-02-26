@@ -5,6 +5,7 @@ export interface Zone {
     id: string;
     name: string;
     polygon: any; // GeoJSON Polygon
+    status?: 'WATER_FLOWING' | 'NO_WATER' | string;
     isActive: boolean;
     createdAt: string;
     updatedAt: string;

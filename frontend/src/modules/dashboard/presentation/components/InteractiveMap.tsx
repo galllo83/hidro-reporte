@@ -33,9 +33,15 @@ export const InteractiveMap = () => {
     const [successMsg, setSuccessMsg] = useState('');
     const featureGroupRef = useRef<any>(null);
 
-    // Fetch zones on mount
+    // Fetch zones on mount and poll every 15 seconds
     useEffect(() => {
         fetchZones();
+
+        const intervalId = setInterval(() => {
+            fetchZones();
+        }, 15000); // Poll every 15 seconds
+
+        return () => clearInterval(intervalId);
     }, [fetchZones]);
 
     // Translate Leaflet-Draw to Spanish
@@ -135,16 +141,26 @@ export const InteractiveMap = () => {
                 />
 
                 {/* Render zones previously saved in the database */}
-                {zones.map((zone) => (
-                    <GeoJSON
-                        key={zone.id}
-                        data={zone.polygon}
-                        style={{ color: '#22d3ee', weight: 2, fillOpacity: 0.15 }}
-                    >
-                        {/* Optional: Add a popup or tooltip with the zone name */}
-                        <div className="hidden">Valve: {zone.name}</div>
-                    </GeoJSON>
-                ))}
+                {zones.map((zone) => {
+                    const isWaterFlowing = zone.status === 'WATER_FLOWING';
+                    const fillColor = isWaterFlowing ? '#3b82f6' : '#ef4444'; // Blue / Red
+
+                    return (
+                        <GeoJSON
+                            key={zone.id + '-' + zone.status} // Force re-render on status change
+                            data={zone.polygon}
+                            style={{
+                                color: fillColor,
+                                weight: 2,
+                                fillOpacity: 0.35,
+                                fillColor: fillColor
+                            }}
+                        >
+                            {/* Optional: Add a popup or tooltip with the zone name */}
+                            <div className="hidden">Valve: {zone.name}</div>
+                        </GeoJSON>
+                    );
+                })}
 
                 <FeatureGroup ref={featureGroupRef}>
                     <EditControl
@@ -172,6 +188,21 @@ export const InteractiveMap = () => {
                     />
                 </FeatureGroup>
             </MapContainer>
+
+            {/* Map Legend */}
+            <div className="absolute bottom-6 right-6 z-[1000] bg-[#0b101a]/90 backdrop-blur-md border border-cyan-500/30 p-4 rounded-xl shadow-[0_0_20px_rgba(34,211,238,0.15)] pointer-events-none">
+                <h4 className="text-cyan-100 font-semibold mb-3 text-sm tracking-wide">Estado de la Red</h4>
+                <div className="flex flex-col gap-2">
+                    <div className="flex items-center gap-3">
+                        <div className="w-4 h-4 rounded-full bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.6)]"></div>
+                        <span className="text-gray-300 text-sm">Con Suministro (Agua)</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                        <div className="w-4 h-4 rounded-full bg-red-500 shadow-[0_0_10px_rgba(239,68,68,0.6)]"></div>
+                        <span className="text-gray-300 text-sm">Sin Suministro</span>
+                    </div>
+                </div>
+            </div>
 
             {/* Valve Name Assignment Modal via Portal to avoid Leaflet SVG class crashes */}
             {typeof document !== 'undefined' && createPortal(

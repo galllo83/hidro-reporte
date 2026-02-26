@@ -23,6 +23,9 @@ export class ZoneEntity {
     })
     polygon: Polygon;
 
+    @Column({ type: 'varchar', length: 50, default: 'WATER_FLOWING' })
+    status: string;
+
     @Column({ type: 'boolean', default: true })
     is_active: boolean;
 

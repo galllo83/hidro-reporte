@@ -1,4 +1,4 @@
-import { Zone } from '../../domain/entities/zone.model';
+import { Zone, ZoneStatus } from '../../domain/entities/zone.model';
 import { ZoneEntity } from '../entities/zone.orm-entity';
 
 export class ZoneMapper {
@@ -7,6 +7,7 @@ export class ZoneMapper {
             id: ormEntity.id,
             name: ormEntity.name,
             polygon: ormEntity.polygon as any, // mapping GeoJSON polygon
+            status: ormEntity.status as ZoneStatus,
             isActive: ormEntity.is_active,
             createdAt: ormEntity.created_at,
             updatedAt: ormEntity.updated_at,
@@ -18,6 +19,7 @@ export class ZoneMapper {
         if (domain.id) ormEntity.id = domain.id;
         ormEntity.name = domain.name;
         ormEntity.polygon = domain.polygon as any;
+        if (domain.status) ormEntity.status = domain.status;
         if (domain.isActive !== undefined) ormEntity.is_active = domain.isActive;
         return ormEntity;
     }

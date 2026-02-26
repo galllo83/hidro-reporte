@@ -19,6 +19,6 @@ import { AuthModule } from '../auth/auth.module'; // To use JwtAuthGuard and Rol
             useClass: ZoneRepository,
         },
     ],
-    exports: [ZoneService],
+    exports: [ZoneService, 'IZoneRepository'],
 })
 export class ZoneModule { }

@@ -49,6 +49,7 @@ export class ZoneRepository implements IZoneRepository {
         await this.repository.update(id, {
             ...(zone.name && { name: zone.name }),
             ...(zone.polygon && { polygon: zone.polygon as any }),
+            ...(zone.status && { status: zone.status }),
             ...(zone.isActive !== undefined && { is_active: zone.isActive }),
         });
         const updatedEntity = await this.repository.findOne({ where: { id } });

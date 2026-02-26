@@ -8,9 +8,19 @@ import { CONFIG_DATABASE } from './helpers/config-database';
 import { ConfigModule } from '@nestjs/config';
 import { WaterServiceModule } from './modules/water-service/water-service.module';
 import { ReportModule } from './modules/report/report.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
-  imports: [ConfigModule.forRoot(), CONFIG_DATABASE(), UserModule, AuthModule, ZoneModule, WaterServiceModule, ReportModule],
+  imports: [
+    ConfigModule.forRoot(),
+    CONFIG_DATABASE(),
+    ScheduleModule.forRoot(),
+    UserModule,
+    AuthModule,
+    ZoneModule,
+    WaterServiceModule,
+    ReportModule
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
