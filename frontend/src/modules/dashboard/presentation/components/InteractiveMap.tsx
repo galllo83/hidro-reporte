@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { MapContainer, TileLayer, FeatureGroup, GeoJSON } from 'react-leaflet';
+import { MapContainer, TileLayer, FeatureGroup, GeoJSON, Popup } from 'react-leaflet';
 // @ts-ignore
 import { EditControl } from 'react-leaflet-draw';
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, Input, useDisclosure } from '@heroui/react';
@@ -12,6 +12,8 @@ import L from 'leaflet';
 import icon from 'leaflet/dist/images/marker-icon.png';
 import iconShadow from 'leaflet/dist/images/marker-shadow.png';
 import { useZones } from '../../application/useZones';
+import type { Zone } from '../../application/useZones';
+import { apiClient } from '../../../../core/api/api.config';
 
 let DefaultIcon = L.icon({
     iconUrl: icon,
@@ -22,6 +24,56 @@ let DefaultIcon = L.icon({
 L.Marker.prototype.options.icon = DefaultIcon;
 
 const PACHUCA_CENTER: [number, number] = [20.1011, -98.7591];
+
+const ZonePopup = ({ zone }: { zone: Zone }) => {
+    const [reports, setReports] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        let isMounted = true;
+        setLoading(true);
+        apiClient.get(`/reports/zone/${zone.id}`)
+            .then((res: any) => {
+                if (isMounted) {
+                    setReports(res.data);
+                    setLoading(false);
+                }
+            })
+            .catch((err: any) => {
+                console.error('Error fetching zone reports', err);
+                if (isMounted) setLoading(false);
+            });
+        return () => { isMounted = false; };
+    }, [zone.id]);
+
+    const restoredCount = reports.filter(r => r.type === 'SUPPLY_RESTORED').length;
+    const endedCount = reports.filter(r => r.type === 'SUPPLY_ENDED').length;
+
+    return (
+        <div className="p-1 min-w-[200px] font-sans">
+            <h3 className="font-bold text-base mb-3 text-gray-800 border-b pb-2">{zone.name}</h3>
+            {loading ? (
+                <div className="flex justify-center items-center py-4">
+                    <div className="w-5 h-5 border-2 border-cyan-500 border-t-transparent rounded-full animate-spin"></div>
+                </div>
+            ) : (
+                <div className="flex flex-col gap-2">
+                    <div className="flex justify-between items-center bg-blue-50 px-3 py-2 rounded-md border border-blue-100">
+                        <span className="text-blue-700 font-medium text-sm">Llegó el agua</span>
+                        <span className="bg-blue-600 text-white text-xs font-bold px-2 py-1 rounded-full">{restoredCount}</span>
+                    </div>
+                    <div className="flex justify-between items-center bg-red-50 px-3 py-2 rounded-md border border-red-100">
+                        <span className="text-red-700 font-medium text-sm">Se fue el agua</span>
+                        <span className="bg-red-600 text-white text-xs font-bold px-2 py-1 rounded-full">{endedCount}</span>
+                    </div>
+                    <div className="mt-2 text-[10px] text-gray-400 text-right uppercase tracking-wider">
+                        Total {reports.length} reportes
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+};
 
 export const InteractiveMap = () => {
     const { zones, fetchZones, createZone, isLoading } = useZones();
@@ -156,8 +208,9 @@ export const InteractiveMap = () => {
                                 fillColor: fillColor
                             }}
                         >
-                            {/* Optional: Add a popup or tooltip with the zone name */}
-                            <div className="hidden">Valve: {zone.name}</div>
+                            <Popup>
+                                <ZonePopup zone={zone} />
+                            </Popup>
                         </GeoJSON>
                     );
                 })}

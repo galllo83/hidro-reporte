@@ -7,43 +7,57 @@ import { EntityManager } from 'typeorm';
 
 @Injectable()
 export class ReportService implements IReportService {
-    constructor(
-        @Inject('IReportRepository')
-        private readonly reportRepository: IReportRepository,
-        private readonly entityManager: EntityManager,
-    ) { }
+  constructor(
+    @Inject('IReportRepository')
+    private readonly reportRepository: IReportRepository,
+    private readonly entityManager: EntityManager,
+  ) { }
 
-    async createReport(userId: string, dto: CreateReportDto): Promise<ReportModel> {
-        // Spatial Intersect Logic (HU-06)
-        // Find the zone that contains this point
-        const query = `
+  async createReport(
+    userId: string,
+    dto: CreateReportDto,
+  ): Promise<ReportModel> {
+    // Spatial Intersect Logic (HU-06)
+    // Find the zone that contains this point
+    const query = `
       SELECT id 
       FROM zones
-      WHERE ST_Contains(polygon, ST_SetSRID(ST_MakePoint($1, $2), 4326))
+      WHERE ST_DWithin(
+        polygon::geography, 
+        ST_SetSRID(ST_MakePoint($1, $2), 4326)::geography, 
+        500
+      )
+      ORDER BY ST_Distance(
+        polygon::geography, 
+        ST_SetSRID(ST_MakePoint($1, $2), 4326)::geography
+      ) ASC
       LIMIT 1;
     `;
 
-        // PostGIS MakePoint takes (longitude, latitude)
-        const result = await this.entityManager.query(query, [dto.location.lng, dto.location.lat]);
-        let zoneId: string | null = null;
+    // PostGIS MakePoint takes (longitude, latitude)
+    const result = await this.entityManager.query(query, [
+      dto.location.lng,
+      dto.location.lat,
+    ]);
+    let zoneId: string | null = null;
 
-        if (result && result.length > 0) {
-            zoneId = result[0].id;
-        }
-
-        return this.reportRepository.create({
-            userId,
-            zoneId,
-            type: dto.type,
-            location: dto.location,
-        });
+    if (result && result.length > 0) {
+      zoneId = result[0].id;
     }
 
-    async getReportsByZone(zoneId: string): Promise<ReportModel[]> {
-        return this.reportRepository.findByZone(zoneId);
-    }
+    return this.reportRepository.create({
+      userId,
+      zoneId,
+      type: dto.type,
+      location: dto.location,
+    });
+  }
 
-    async getAllReports(): Promise<ReportModel[]> {
-        return this.reportRepository.findAll();
-    }
+  async getReportsByZone(zoneId: string): Promise<ReportModel[]> {
+    return this.reportRepository.findByZone(zoneId);
+  }
+
+  async getAllReports(): Promise<ReportModel[]> {
+    return this.reportRepository.findAll();
+  }
 }

@@ -17,7 +17,7 @@ export class AuthService implements IAuthService {
     @Inject('IUserRepository')
     private readonly userRepository: IUserRepository,
     private readonly jwtService: JwtService,
-  ) { }
+  ) {}
 
   async register(dto: RegisterDto): Promise<{ accessToken: string }> {
     const existingUser = await this.userRepository.findByEmail(dto.email);

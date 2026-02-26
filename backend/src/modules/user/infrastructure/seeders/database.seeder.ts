@@ -14,7 +14,7 @@ export class DatabaseSeeder implements OnModuleInit {
     @InjectRepository(UserOrmEntity)
     private readonly userRepository: Repository<UserOrmEntity>,
     private readonly dataSource: DataSource,
-  ) { }
+  ) {}
 
   async onModuleInit() {
     await this.seedUsers();

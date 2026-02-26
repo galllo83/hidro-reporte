@@ -34,7 +34,7 @@ export class UserController {
   constructor(
     @Inject('IUserService')
     private readonly userService: IUserService,
-  ) { }
+  ) {}
 
   @Get()
   @ApiResponse({ status: 200, description: 'The user has been found.' })

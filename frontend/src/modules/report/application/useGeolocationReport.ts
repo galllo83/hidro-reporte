@@ -10,6 +10,7 @@ export interface AddressComponents {
 
 export const useGeolocationReport = () => {
     const [isReporting, setIsReporting] = useState(false);
+    const [reportingType, setReportingType] = useState<ReportType | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [successData, setSuccessData] = useState<ReportResponse | null>(null);
     const [pendingReport, setPendingReport] = useState<{ type: ReportType, lat: number, lng: number, address?: AddressComponents } | null>(null);
@@ -53,6 +54,7 @@ export const useGeolocationReport = () => {
         }
 
         setIsReporting(true);
+        setReportingType(type);
         setError(null);
         setSuccessData(null);
         setPendingReport(null);
@@ -96,6 +98,7 @@ export const useGeolocationReport = () => {
             setError(err.message || 'Ocurrió un error inesperado al calcular tus coordenadas para el reporte.');
         } finally {
             setIsReporting(false);
+            setReportingType(null);
         }
     };
 
@@ -103,6 +106,7 @@ export const useGeolocationReport = () => {
         if (!pendingReport) return;
 
         setIsReporting(true);
+        setReportingType(pendingReport.type);
         setError(null);
 
         try {
@@ -128,6 +132,7 @@ export const useGeolocationReport = () => {
             setError(err.message || 'Ocurrió un error inesperado al confirmar y enviar el reporte.');
         } finally {
             setIsReporting(false);
+            setReportingType(null);
         }
     };
 
@@ -142,6 +147,7 @@ export const useGeolocationReport = () => {
         cancelReport,
         pendingReport,
         isReporting,
+        reportingType,
         error,
         successData,
         clearError: () => setError(null),

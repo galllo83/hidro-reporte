@@ -22,7 +22,7 @@ export class UserRepository implements IUserRepository {
   constructor(
     @InjectRepository(UserOrmEntity)
     private readonly ormRepository: Repository<UserOrmEntity>,
-  ) { }
+  ) {}
 
   async findAll(
     sortBy: UserSortParamsEnum,

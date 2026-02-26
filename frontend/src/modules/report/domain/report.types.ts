@@ -1,4 +1,4 @@
-export type ReportType = 'SUPPLY_RESTORED' | 'LEAK_REPORTED';
+export type ReportType = 'SUPPLY_RESTORED' | 'LEAK_REPORTED' | 'SUPPLY_ENDED';
 
 export interface LocationData {
     lat: number;

@@ -7,18 +7,15 @@ import { ZoneEntity } from './infrastructure/entities/zone.orm-entity';
 import { AuthModule } from '../auth/auth.module'; // To use JwtAuthGuard and RolesGuard
 
 @Module({
-    imports: [
-        TypeOrmModule.forFeature([ZoneEntity]),
-        AuthModule,
-    ],
-    controllers: [ZoneController],
-    providers: [
-        ZoneService,
-        {
-            provide: 'IZoneRepository',
-            useClass: ZoneRepository,
-        },
-    ],
-    exports: [ZoneService, 'IZoneRepository'],
+  imports: [TypeOrmModule.forFeature([ZoneEntity]), AuthModule],
+  controllers: [ZoneController],
+  providers: [
+    ZoneService,
+    {
+      provide: 'IZoneRepository',
+      useClass: ZoneRepository,
+    },
+  ],
+  exports: [ZoneService, 'IZoneRepository'],
 })
-export class ZoneModule { }
+export class ZoneModule {}

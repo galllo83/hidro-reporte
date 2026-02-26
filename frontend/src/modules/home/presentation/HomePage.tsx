@@ -14,6 +14,7 @@ export const HomePage = () => {
         cancelReport,
         pendingReport,
         isReporting,
+        reportingType,
         error: reportError,
         successData,
         clearError,
@@ -72,11 +73,11 @@ export const HomePage = () => {
                             Reporte Inmediato
                         </h2>
                         <p className="text-gray-400 text-sm max-w-md">
-                            Si el servicio de agua acaba de ser restablecido en tu colonia, presiona el botón para emitir una alerta geo-referenciada y nutrir nuestra inteligencia colectiva.
+                            Si el servicio de agua acaba de ser restablecido en tu colonia, o si se ha interrumpido el suministro, presiona el botón correspondiente para emitir una alerta geo-referenciada y nutrir nuestra inteligencia colectiva.
                         </p>
                     </div>
 
-                    <div className="flex-shrink-0 w-full md:w-auto z-10 flex flex-col items-center">
+                    <div className="flex-shrink-0 w-full md:w-auto z-10 flex flex-col sm:flex-row items-center gap-4">
                         <button
                             onClick={() => prepareReport('SUPPLY_RESTORED')}
                             disabled={isReporting}
@@ -94,7 +95,7 @@ export const HomePage = () => {
                                 <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-in-out" />
                             )}
 
-                            {isReporting ? (
+                            {isReporting && reportingType === 'SUPPLY_RESTORED' ? (
                                 <>
                                     <div className="w-5 h-5 border-2 border-gray-400 border-t-transparent rounded-full animate-spin" />
                                     <span>Calculando GPS...</span>
@@ -103,6 +104,34 @@ export const HomePage = () => {
                                 <>
                                     <Droplet className="w-6 h-6 animate-bounce" />
                                     <span>Llegó el Agua</span>
+                                </>
+                            )}
+                        </button>
+                        <button
+                            onClick={() => prepareReport('SUPPLY_ENDED')}
+                            disabled={isReporting}
+                            className={`
+                                relative group overflow-hidden w-full md:w-64 h-16 rounded-2xl font-bold text-lg uppercase tracking-wider
+                                transition-all duration-300 transform hover:-translate-y-1 hover:shadow-[0_0_40px_rgba(239,68,68,0.4)]
+                                active:scale-95 flex items-center justify-center gap-3
+                                ${isReporting
+                                    ? 'bg-gray-800 text-gray-400 border border-gray-700 cursor-not-allowed'
+                                    : 'bg-[#1a1515] text-red-400 border border-red-500/30 hover:bg-red-500/10 hover:border-red-400 shadow-[0_0_15px_rgba(239,68,68,0.2)]'}
+                            `}
+                        >
+                            {!isReporting && (
+                                <div className="absolute inset-0 bg-red-500/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-in-out" />
+                            )}
+
+                            {isReporting && reportingType === 'SUPPLY_ENDED' ? (
+                                <>
+                                    <div className="w-5 h-5 border-2 border-gray-400 border-t-transparent rounded-full animate-spin" />
+                                    <span>Calculando GPS...</span>
+                                </>
+                            ) : (
+                                <>
+                                    <AlertCircle className="w-6 h-6 animate-pulse" />
+                                    <span>Se Fue el Agua</span>
                                 </>
                             )}
                         </button>
@@ -212,7 +241,7 @@ export const HomePage = () => {
                             </div>
                             <h3 className="text-xl font-bold text-white text-center mb-2">¿Confirmar Reporte?</h3>
                             <p className="text-gray-400 text-center text-sm mb-6">
-                                Estás a punto de enviar un reporte confirmando que "Llegó el agua" en tu ubicación actual.
+                                {pendingReport.type === 'SUPPLY_ENDED' ? 'Confirmar que se fue el agua' : 'Confirmar que llegó el agua'}
                             </p>
 
                             <div className="bg-[#0b101a] rounded-xl p-4 mb-6 border border-gray-800">
@@ -283,7 +312,7 @@ export const HomePage = () => {
                             </div>
                             <h3 className="text-2xl font-bold text-white mb-2 tracking-wide">¡Reporte Exitoso!</h3>
                             <p className="text-gray-400 text-sm mb-6">
-                                Tu reporte de "Llegó el agua" ha sido registrado y geolocalizado correctamente.
+                                Tu reporte de "{successData.type === 'SUPPLY_ENDED' ? 'Se fue el agua' : 'Llegó el agua'}" ha sido registrado y geolocalizado correctamente.
                             </p>
 
                             <button

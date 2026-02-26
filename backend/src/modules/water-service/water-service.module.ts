@@ -20,4 +20,4 @@ import { WaterServiceRepository } from './infrastructure/repositories/water-serv
   ],
   exports: ['IWaterService'],
 })
-export class WaterServiceModule { }
+export class WaterServiceModule {}

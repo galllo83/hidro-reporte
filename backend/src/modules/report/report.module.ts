@@ -8,19 +8,19 @@ import { ZoneModule } from '../zone/zone.module';
 import { InferenceService } from './application/services/inference.service';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([ReportOrmEntity]), ZoneModule],
-    controllers: [ReportController],
-    providers: [
-        {
-            provide: 'IReportService',
-            useClass: ReportService,
-        },
-        {
-            provide: 'IReportRepository',
-            useClass: ReportRepository,
-        },
-        InferenceService,
-    ],
-    exports: ['IReportService'],
+  imports: [TypeOrmModule.forFeature([ReportOrmEntity]), ZoneModule],
+  controllers: [ReportController],
+  providers: [
+    {
+      provide: 'IReportService',
+      useClass: ReportService,
+    },
+    {
+      provide: 'IReportRepository',
+      useClass: ReportRepository,
+    },
+    InferenceService,
+  ],
+  exports: ['IReportService'],
 })
-export class ReportModule { }
+export class ReportModule {}
