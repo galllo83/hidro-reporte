@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   Param,
+  Patch,
   Post,
   Request,
   UseGuards,
@@ -29,7 +30,7 @@ export class ReportController {
   constructor(
     @Inject('IReportService')
     private readonly reportService: IReportService,
-  ) {}
+  ) { }
 
   @Post()
   @Roles(Role.USER, Role.ADMIN)
@@ -60,4 +61,16 @@ export class ReportController {
   async getReportsByZone(@Param('zoneId') zoneId: string) {
     return this.reportService.getReportsByZone(zoneId);
   }
+
+  @Patch(':id/attend')
+  @Roles(Role.ADMIN)
+  @ApiOperation({ summary: 'Mark a leak report as attended' })
+  @ApiResponse({
+    status: 200,
+    description: 'Returns the updated report.',
+  })
+  async markAsAttended(@Param('id') id: string) {
+    return this.reportService.markAsAttended(id);
+  }
 }
+

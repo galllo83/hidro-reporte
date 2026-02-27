@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { MapContainer, TileLayer, FeatureGroup, GeoJSON, Popup } from 'react-leaflet';
-// @ts-ignore
+import { MapContainer, TileLayer, FeatureGroup, GeoJSON, Popup, Marker } from 'react-leaflet';
 import { EditControl } from 'react-leaflet-draw';
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, Input, useDisclosure } from '@heroui/react';
 import { CheckCircle2 } from 'lucide-react';
@@ -13,9 +12,10 @@ import icon from 'leaflet/dist/images/marker-icon.png';
 import iconShadow from 'leaflet/dist/images/marker-shadow.png';
 import { useZones } from '../../application/useZones';
 import type { Zone } from '../../application/useZones';
+import { useLeakReports } from '../../application/useLeakReports';
 import { apiClient } from '../../../../core/api/api.config';
 
-let DefaultIcon = L.icon({
+const DefaultIcon = L.icon({
     iconUrl: icon,
     shadowUrl: iconShadow,
     iconSize: [25, 41],
@@ -26,20 +26,20 @@ L.Marker.prototype.options.icon = DefaultIcon;
 const PACHUCA_CENTER: [number, number] = [20.1011, -98.7591];
 
 const ZonePopup = ({ zone }: { zone: Zone }) => {
-    const [reports, setReports] = useState<any[]>([]);
+    const [reports, setReports] = useState<Array<{ type: string }>>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         let isMounted = true;
-        setLoading(true);
+
         apiClient.get(`/reports/zone/${zone.id}`)
-            .then((res: any) => {
+            .then((res: { data: Array<{ type: string }> }) => {
                 if (isMounted) {
                     setReports(res.data);
                     setLoading(false);
                 }
             })
-            .catch((err: any) => {
+            .catch((err: unknown) => {
                 console.error('Error fetching zone reports', err);
                 if (isMounted) setLoading(false);
             });
@@ -77,29 +77,34 @@ const ZonePopup = ({ zone }: { zone: Zone }) => {
 
 export const InteractiveMap = () => {
     const { zones, fetchZones, createZone, isLoading } = useZones();
+    const { leakReports, fetchLeakReports, markLeakAsAttended } = useLeakReports();
     const { isOpen, onOpen, onClose } = useDisclosure();
 
-    const [pendingLayer, setPendingLayer] = useState<any>(null);
+    const [pendingLayer, setPendingLayer] = useState<L.Layer | null>(null);
     const [valveName, setValveName] = useState('');
     const [errorMsg, setErrorMsg] = useState('');
     const [successMsg, setSuccessMsg] = useState('');
-    const featureGroupRef = useRef<any>(null);
+    const featureGroupRef = useRef<L.FeatureGroup>(null);
 
     // Fetch zones on mount and poll every 15 seconds
     useEffect(() => {
         fetchZones();
+        fetchLeakReports();
 
         const intervalId = setInterval(() => {
             fetchZones();
+            fetchLeakReports();
         }, 15000); // Poll every 15 seconds
 
         return () => clearInterval(intervalId);
-    }, [fetchZones]);
+    }, [fetchZones, fetchLeakReports]);
 
     // Translate Leaflet-Draw to Spanish
     useEffect(() => {
-        if ((L as any).drawLocal) {
-            const drawLocal = (L as any).drawLocal;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const LAny = L as any;
+        if (LAny.drawLocal) {
+            const drawLocal = LAny.drawLocal;
             drawLocal.draw.toolbar.buttons.polygon = 'Dibujar una zona (polígono)';
             drawLocal.draw.handlers.polygon.tooltip.start = 'Haga clic para empezar a dibujar la zona.';
             drawLocal.draw.handlers.polygon.tooltip.cont = 'Haga clic para continuar dibujando.';
@@ -125,8 +130,8 @@ export const InteractiveMap = () => {
         }
     }, []);
 
-    const _onCreate = (e: any) => {
-        const { layerType, layer } = e;
+    const _onCreate = (e: unknown) => {
+        const { layerType, layer } = e as { layerType: string, layer: L.Layer };
         console.log('Leaflet Draw Event onCreated triggered', layerType);
         if (layerType === 'polygon') {
             setPendingLayer(layer);
@@ -144,12 +149,13 @@ export const InteractiveMap = () => {
         }
 
         try {
-            const geojson = pendingLayer.toGeoJSON().geometry;
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const geojson = (pendingLayer as any).toGeoJSON().geometry;
             console.log('Sending GeoJSON to API:', JSON.stringify(geojson, null, 2));
             await createZone(valveName, geojson);
 
             // Remove the manually drawn layer because it will now be rendered by our <GeoJSON> component
-            if (featureGroupRef.current) {
+            if (featureGroupRef.current && pendingLayer) {
                 featureGroupRef.current.removeLayer(pendingLayer);
             }
             onClose();
@@ -158,8 +164,9 @@ export const InteractiveMap = () => {
             // Show success message temporarily
             setSuccessMsg(`Zona "${valveName}" guardada exitosamente.`);
             setTimeout(() => setSuccessMsg(''), 5000);
-        } catch (err: any) {
-            setErrorMsg(err.message || 'Error al guardar la zona. Intente nuevamente.');
+        } catch (err: unknown) {
+            const typedErr = err as Error;
+            setErrorMsg(typedErr.message || 'Error al guardar la zona. Intente nuevamente.');
         }
     };
 
@@ -177,7 +184,7 @@ export const InteractiveMap = () => {
             {successMsg && (
                 <div className="absolute top-6 left-1/2 transform -translate-x-1/2 z-[1000] bg-[#0b101a]/95 border border-cyan-500/50 text-cyan-100 px-6 py-3 rounded-xl shadow-[0_0_30px_rgba(34,211,238,0.3)] flex items-center gap-3 backdrop-blur-md animate-appearance-in pointer-events-none">
                     <CheckCircle2 className="w-5 h-5 text-cyan-400" />
-                    <span className="font-medium">{successMsg}</span>
+                    <span className="font-medium inline-block align-middle">{successMsg}</span>
                 </div>
             )}
 
@@ -215,6 +222,72 @@ export const InteractiveMap = () => {
                     );
                 })}
 
+                {/* Render leak reports as Markers */}
+                {leakReports.map((report) => {
+                    const isAttended = report.isAttended;
+                    const markerColor = isAttended ? '#10b981' : '#ef4444'; // Emerald / Red
+
+                    const customIcon = L.divIcon({
+                        className: 'custom-leak-marker',
+                        html: `<div style="background-color: ${markerColor}; width: 20px; height: 20px; border-radius: 50%; border: 3px solid white; box-shadow: 0 0 10px ${markerColor}80;"></div>`,
+                        iconSize: [20, 20],
+                        iconAnchor: [10, 10],
+                    });
+
+                    return (
+                        <Marker
+                            key={report.id}
+                            position={[report.location.lat, report.location.lng]}
+                            icon={customIcon}
+                        >
+                            <Popup>
+                                <div className="p-1 min-w-[200px] font-sans">
+                                    <h3 className="font-bold text-base mb-2 text-gray-800 border-b pb-2 flex items-center gap-2">
+                                        <div className="w-2 h-2 rounded-full" style={{ backgroundColor: markerColor }}></div>
+                                        Reporte de Fuga
+                                    </h3>
+
+                                    <div className="text-sm text-gray-600 space-y-1 mb-3">
+                                        <p><span className="font-semibold">Calle:</span> {report.address?.street || 'No disponible'}</p>
+                                        <p><span className="font-semibold">Colonia:</span> {report.address?.neighborhood || 'No disponible'}</p>
+                                        <p><span className="font-semibold">CP:</span> {report.address?.postalCode || 'No disponible'}</p>
+                                    </div>
+
+                                    <div className="bg-gray-50 border border-gray-100 rounded p-2 mb-3">
+                                        <p className="text-xs text-gray-500 text-center">
+                                            Una persona ha reportado esta fuga en esta ubicación.
+                                        </p>
+                                    </div>
+
+                                    {!isAttended ? (
+                                        <Button
+                                            size="sm"
+                                            color="primary"
+                                            className="w-full bg-cyan-600 font-semibold"
+                                            onPress={async () => {
+                                                try {
+                                                    await markLeakAsAttended(report.id);
+                                                    setSuccessMsg('Fuga marcada como atendida exitosamente.');
+                                                    setTimeout(() => setSuccessMsg(''), 5000);
+                                                } catch (e: unknown) {
+                                                    const typedErr = e as Error;
+                                                    setErrorMsg(typedErr.message || 'Error al atender');
+                                                }
+                                            }}
+                                        >
+                                            Marcar como Atendida
+                                        </Button>
+                                    ) : (
+                                        <div className="text-center text-sm text-emerald-600 font-semibold flex flex-col items-center justify-center py-1">
+                                            Fuga Atendida
+                                        </div>
+                                    )}
+                                </div>
+                            </Popup>
+                        </Marker>
+                    );
+                })}
+
                 <FeatureGroup ref={featureGroupRef}>
                     <EditControl
                         position="topright"
@@ -244,15 +317,27 @@ export const InteractiveMap = () => {
 
             {/* Map Legend */}
             <div className="absolute bottom-6 right-6 z-[1000] bg-[#0b101a]/90 backdrop-blur-md border border-cyan-500/30 p-4 rounded-xl shadow-[0_0_20px_rgba(34,211,238,0.15)] pointer-events-none">
-                <h4 className="text-cyan-100 font-semibold mb-3 text-sm tracking-wide">Estado de la Red</h4>
+                <h4 className="text-cyan-100 font-semibold mb-3 text-sm tracking-wide">Simbología</h4>
                 <div className="flex flex-col gap-2">
+                    <h5 className="text-xs text-cyan-500/70 font-bold uppercase tracking-wide">Zonificación</h5>
                     <div className="flex items-center gap-3">
-                        <div className="w-4 h-4 rounded-full bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.6)]"></div>
+                        <div className="w-4 h-4 rounded-sm bg-blue-500/40 border-2 border-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.6)]"></div>
                         <span className="text-gray-300 text-sm">Con Suministro (Agua)</span>
                     </div>
                     <div className="flex items-center gap-3">
-                        <div className="w-4 h-4 rounded-full bg-red-500 shadow-[0_0_10px_rgba(239,68,68,0.6)]"></div>
+                        <div className="w-4 h-4 rounded-sm bg-red-500/40 border-2 border-red-500 shadow-[0_0_10px_rgba(239,68,68,0.6)]"></div>
                         <span className="text-gray-300 text-sm">Sin Suministro</span>
+                    </div>
+                </div>
+                <div className="flex flex-col gap-2 mt-4">
+                    <h5 className="text-xs text-cyan-500/70 font-bold uppercase tracking-wide">Fugas</h5>
+                    <div className="flex items-center gap-3">
+                        <div className="w-3 h-3 rounded-full bg-red-500 ring-2 ring-white shadow-[0_0_10px_rgba(239,68,68,0.6)] mx-0.5"></div>
+                        <span className="text-gray-300 text-sm">Fuga sin atender</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                        <div className="w-3 h-3 rounded-full bg-emerald-500 ring-2 ring-white shadow-[0_0_10px_rgba(16,185,129,0.6)] mx-0.5"></div>
+                        <span className="text-gray-300 text-sm">Fuga Atendida</span>
                     </div>
                 </div>
             </div>

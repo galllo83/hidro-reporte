@@ -78,60 +78,90 @@ export const HomePage = () => {
                     </div>
 
                     <div className="flex-shrink-0 w-full md:w-auto z-10 flex flex-col sm:flex-row items-center gap-4">
+                        <div className="flex flex-col gap-4 w-full md:w-auto">
+                            <button
+                                onClick={() => prepareReport('SUPPLY_RESTORED')}
+                                disabled={isReporting}
+                                className={`
+                                    relative group overflow-hidden w-full md:w-64 h-16 rounded-2xl font-bold text-lg uppercase tracking-wider
+                                    transition-all duration-300 transform hover:-translate-y-1 hover:shadow-[0_0_40px_rgba(0,212,255,0.6)]
+                                    active:scale-95 flex items-center justify-center gap-3
+                                    ${isReporting
+                                        ? 'bg-gray-800 text-gray-400 border border-gray-700 cursor-not-allowed'
+                                        : 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-[0_0_20px_rgba(0,212,255,0.4)]'}
+                                `}
+                            >
+                                {/* Inner pulse effect on hover */}
+                                {!isReporting && (
+                                    <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-in-out" />
+                                )}
+
+                                {isReporting && reportingType === 'SUPPLY_RESTORED' ? (
+                                    <>
+                                        <div className="w-5 h-5 border-2 border-gray-400 border-t-transparent rounded-full animate-spin" />
+                                        <span>Calculando GPS...</span>
+                                    </>
+                                ) : (
+                                    <>
+                                        <Droplet className="w-6 h-6 animate-bounce" />
+                                        <span>Llegó el Agua</span>
+                                    </>
+                                )}
+                            </button>
+                            <button
+                                onClick={() => prepareReport('SUPPLY_ENDED')}
+                                disabled={isReporting}
+                                className={`
+                                    relative group overflow-hidden w-full md:w-64 h-16 rounded-2xl font-bold text-lg uppercase tracking-wider
+                                    transition-all duration-300 transform hover:-translate-y-1 hover:shadow-[0_0_40px_rgba(239,68,68,0.4)]
+                                    active:scale-95 flex items-center justify-center gap-3
+                                    ${isReporting
+                                        ? 'bg-gray-800 text-gray-400 border border-gray-700 cursor-not-allowed'
+                                        : 'bg-[#1a1515] text-red-400 border border-red-500/30 hover:bg-red-500/10 hover:border-red-400 shadow-[0_0_15px_rgba(239,68,68,0.2)]'}
+                                `}
+                            >
+                                {!isReporting && (
+                                    <div className="absolute inset-0 bg-red-500/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-in-out" />
+                                )}
+
+                                {isReporting && reportingType === 'SUPPLY_ENDED' ? (
+                                    <>
+                                        <div className="w-5 h-5 border-2 border-gray-400 border-t-transparent rounded-full animate-spin" />
+                                        <span>Calculando GPS...</span>
+                                    </>
+                                ) : (
+                                    <>
+                                        <AlertCircle className="w-6 h-6 animate-pulse" />
+                                        <span>Se Fue el Agua</span>
+                                    </>
+                                )}
+                            </button>
+                        </div>
                         <button
-                            onClick={() => prepareReport('SUPPLY_RESTORED')}
+                            onClick={() => prepareReport('LEAK_REPORTED')}
                             disabled={isReporting}
                             className={`
-                                relative group overflow-hidden w-full md:w-64 h-16 rounded-2xl font-bold text-lg uppercase tracking-wider
-                                transition-all duration-300 transform hover:-translate-y-1 hover:shadow-[0_0_40px_rgba(0,212,255,0.6)]
-                                active:scale-95 flex items-center justify-center gap-3
+                                relative group overflow-hidden w-full md:w-64 h-16 sm:h-[136px] rounded-2xl font-bold text-lg uppercase tracking-wider
+                                transition-all duration-300 transform hover:-translate-y-1 hover:shadow-[0_0_40px_rgba(16,185,129,0.4)]
+                                active:scale-95 flex flex-row sm:flex-col items-center justify-center gap-3
                                 ${isReporting
                                     ? 'bg-gray-800 text-gray-400 border border-gray-700 cursor-not-allowed'
-                                    : 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-[0_0_20px_rgba(0,212,255,0.4)]'}
+                                    : 'bg-[#15201c] text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/10 hover:border-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.2)]'}
                             `}
                         >
-                            {/* Inner pulse effect on hover */}
                             {!isReporting && (
-                                <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-in-out" />
+                                <div className="absolute inset-0 bg-emerald-500/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-in-out" />
                             )}
 
-                            {isReporting && reportingType === 'SUPPLY_RESTORED' ? (
+                            {isReporting && reportingType === 'LEAK_REPORTED' ? (
                                 <>
                                     <div className="w-5 h-5 border-2 border-gray-400 border-t-transparent rounded-full animate-spin" />
                                     <span>Calculando GPS...</span>
                                 </>
                             ) : (
                                 <>
-                                    <Droplet className="w-6 h-6 animate-bounce" />
-                                    <span>Llegó el Agua</span>
-                                </>
-                            )}
-                        </button>
-                        <button
-                            onClick={() => prepareReport('SUPPLY_ENDED')}
-                            disabled={isReporting}
-                            className={`
-                                relative group overflow-hidden w-full md:w-64 h-16 rounded-2xl font-bold text-lg uppercase tracking-wider
-                                transition-all duration-300 transform hover:-translate-y-1 hover:shadow-[0_0_40px_rgba(239,68,68,0.4)]
-                                active:scale-95 flex items-center justify-center gap-3
-                                ${isReporting
-                                    ? 'bg-gray-800 text-gray-400 border border-gray-700 cursor-not-allowed'
-                                    : 'bg-[#1a1515] text-red-400 border border-red-500/30 hover:bg-red-500/10 hover:border-red-400 shadow-[0_0_15px_rgba(239,68,68,0.2)]'}
-                            `}
-                        >
-                            {!isReporting && (
-                                <div className="absolute inset-0 bg-red-500/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-in-out" />
-                            )}
-
-                            {isReporting && reportingType === 'SUPPLY_ENDED' ? (
-                                <>
-                                    <div className="w-5 h-5 border-2 border-gray-400 border-t-transparent rounded-full animate-spin" />
-                                    <span>Calculando GPS...</span>
-                                </>
-                            ) : (
-                                <>
-                                    <AlertCircle className="w-6 h-6 animate-pulse" />
-                                    <span>Se Fue el Agua</span>
+                                    <Droplet className="w-6 h-6" style={{ fill: 'currentColor' }} />
+                                    <span>Reportar Fuga</span>
                                 </>
                             )}
                         </button>
@@ -185,7 +215,7 @@ export const HomePage = () => {
                         </div>
                     ) : (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            {services.map((service: any) => (
+                            {services.map((service: { id: string; serviceNumber: string; street: string; neighborhood: string; city: string; postalCode?: string }) => (
                                 <div key={service.id} className="group relative bg-[#0b101a] border border-gray-800 hover:border-cyan-500/40 p-6 rounded-2xl transition-all duration-300 hover:shadow-[0_0_30px_rgba(6,182,212,0.1)]">
                                     <button
                                         onClick={() => removeService(service.id)}
@@ -241,7 +271,11 @@ export const HomePage = () => {
                             </div>
                             <h3 className="text-xl font-bold text-white text-center mb-2">¿Confirmar Reporte?</h3>
                             <p className="text-gray-400 text-center text-sm mb-6">
-                                {pendingReport.type === 'SUPPLY_ENDED' ? 'Confirmar que se fue el agua' : 'Confirmar que llegó el agua'}
+                                {pendingReport.type === 'SUPPLY_ENDED'
+                                    ? 'Confirmar que se fue el agua'
+                                    : pendingReport.type === 'LEAK_REPORTED'
+                                        ? 'Confirmar reporte de fuga de agua'
+                                        : 'Confirmar que llegó el agua'}
                             </p>
 
                             <div className="bg-[#0b101a] rounded-xl p-4 mb-6 border border-gray-800">
@@ -255,7 +289,8 @@ export const HomePage = () => {
                                             <p className="text-gray-200 font-medium text-sm">{pendingReport.address.street || 'Calle desconocida'}</p>
                                             <p className="text-gray-400 text-xs mt-1">
                                                 {pendingReport.address.neighborhood ? `${pendingReport.address.neighborhood}, ` : ''}
-                                                {pendingReport.address.city || 'Municipio desconocido'}
+                                                <span className="font-semibold block mb-1">CP:</span>
+                                                {pendingReport.address.postalCode || 'CP desconocido'}
                                             </p>
                                         </div>
                                         <div className="text-xs text-center text-gray-500 mt-1">
@@ -312,7 +347,11 @@ export const HomePage = () => {
                             </div>
                             <h3 className="text-2xl font-bold text-white mb-2 tracking-wide">¡Reporte Exitoso!</h3>
                             <p className="text-gray-400 text-sm mb-6">
-                                Tu reporte de "{successData.type === 'SUPPLY_ENDED' ? 'Se fue el agua' : 'Llegó el agua'}" ha sido registrado y geolocalizado correctamente.
+                                Tu reporte de "{successData.type === 'SUPPLY_ENDED'
+                                    ? 'Se fue el agua'
+                                    : successData.type === 'LEAK_REPORTED'
+                                        ? 'Fuga de agua'
+                                        : 'Llegó el agua'}" ha sido registrado y geolocalizado correctamente.
                             </p>
 
                             <button

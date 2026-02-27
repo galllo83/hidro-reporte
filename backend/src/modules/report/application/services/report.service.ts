@@ -1,4 +1,4 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Injectable, Inject, NotFoundException } from '@nestjs/common';
 import { IReportService } from '../ports/in/report.interface';
 import { IReportRepository } from '../ports/out/report-repository.interface';
 import { CreateReportDto } from '../dto/create-report.dto';
@@ -50,6 +50,8 @@ export class ReportService implements IReportService {
       zoneId,
       type: dto.type,
       location: dto.location,
+      address: dto.address,
+      isAttended: false,
     });
   }
 
@@ -57,7 +59,15 @@ export class ReportService implements IReportService {
     return this.reportRepository.findByZone(zoneId);
   }
 
-  async getAllReports(): Promise<ReportModel[]> {
+  getAllReports(): Promise<ReportModel[]> {
     return this.reportRepository.findAll();
+  }
+
+  async markAsAttended(reportId: string): Promise<ReportModel> {
+    const report = await this.reportRepository.findById(reportId);
+    if (!report) {
+      throw new NotFoundException(`Report with ID ${reportId} not found`);
+    }
+    return this.reportRepository.update(reportId, { isAttended: true });
   }
 }

@@ -45,4 +45,16 @@ export class ReportOrmEntity {
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
+
+  @Column({ name: 'street', nullable: true })
+  street: string;
+
+  @Column({ name: 'neighborhood', nullable: true })
+  neighborhood: string;
+
+  @Column({ name: 'postal_code', nullable: true })
+  postalCode: string;
+
+  @Column({ name: 'is_attended', default: false })
+  isAttended: boolean;
 }

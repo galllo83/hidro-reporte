@@ -6,10 +6,16 @@ export const reportRepo = {
         try {
             const response = await apiClient.post<ReportResponse>('/reports', payload);
             return response.data;
-        } catch (error: any) {
-            console.error('Error in API reportRepo.createReport:', error);
-            const msg = error.response?.data?.message || 'Error al conectar con el servidor';
-            throw new Error(Array.isArray(msg) ? msg.join(', ') : msg);
+        } catch (error: unknown) {
+            console.error('API Error in createReport:', error);
+            const typedError = error as { response?: { data?: { message?: string | string[] } } };
+
+            if (typedError.response && typedError.response.data) {
+                const msgs = typedError.response.data.message;
+                throw new Error(Array.isArray(msgs) ? msgs.join(', ') : msgs);
+            }
+
+            throw error;
         }
     }
 };

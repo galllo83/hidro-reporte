@@ -19,9 +19,11 @@ export const useLogin = () => {
             localStorage.setItem('auth_user', JSON.stringify(response.user));
 
             return response.user;
-        } catch (err: any) {
-            setError(err.message || 'Ocurrió un error al iniciar sesión');
-            return null;
+        } catch (err: unknown) {
+            const typedErr = err as { response?: { data?: { message?: string | string[] } } };
+            const msg = typedErr.response?.data?.message || 'Error de conexión. Intente en unos momentos.';
+            setError(Array.isArray(msg) ? msg[0] : msg);
+            throw typedErr;
         } finally {
             setIsLoading(false);
         }

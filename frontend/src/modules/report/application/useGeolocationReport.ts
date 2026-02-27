@@ -5,7 +5,7 @@ import type { ReportType, ReportResponse } from '../domain/report.types';
 export interface AddressComponents {
     street?: string;
     neighborhood?: string;
-    city?: string;
+    postalCode?: string;
 }
 
 export const useGeolocationReport = () => {
@@ -78,7 +78,7 @@ export const useGeolocationReport = () => {
                         address = {
                             street: data.address.road || data.address.pedestrian,
                             neighborhood: data.address.suburb || data.address.neighbourhood || data.address.village,
-                            city: data.address.city || data.address.town || data.address.municipality || data.address.county
+                            postalCode: data.address.postcode
                         };
                     }
                 }
@@ -93,9 +93,10 @@ export const useGeolocationReport = () => {
                 address
             });
 
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error('Report preparation error:', err);
-            setError(err.message || 'Ocurrió un error inesperado al calcular tus coordenadas para el reporte.');
+            const typedErr = err as Error;
+            setError(typedErr.message || 'Ocurrió un error inesperado al calcular tus coordenadas para el reporte.');
         } finally {
             setIsReporting(false);
             setReportingType(null);
@@ -115,7 +116,8 @@ export const useGeolocationReport = () => {
                 location: {
                     lat: pendingReport.lat,
                     lng: pendingReport.lng
-                }
+                },
+                address: pendingReport.address
             };
 
             const data = await reportRepo.createReport(payload);
@@ -127,9 +129,10 @@ export const useGeolocationReport = () => {
                 setSuccessData(null);
             }, 5000);
 
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error('Report submission error:', err);
-            setError(err.message || 'Ocurrió un error inesperado al confirmar y enviar el reporte.');
+            const typedErr = err as Error;
+            setError(typedErr.message || 'Ocurrió un error inesperado al confirmar y enviar el reporte.');
         } finally {
             setIsReporting(false);
             setReportingType(null);

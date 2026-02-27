@@ -18,9 +18,11 @@ export const useRegister = () => {
             localStorage.setItem('auth_user', JSON.stringify(response.user));
 
             return response.user;
-        } catch (err: any) {
-            setError(err.message || 'Ocurrió un error al registrar la cuenta');
-            return null;
+        } catch (err: unknown) {
+            const typedErr = err as { response?: { data?: { message?: string | string[] } } };
+            const msg = typedErr.response?.data?.message || 'Error de conexión con el servidor. Por favor, intenta de nuevo más tarde.';
+            setError(Array.isArray(msg) ? msg[0] : msg);
+            throw typedErr;
         } finally {
             setIsLoading(false);
         }

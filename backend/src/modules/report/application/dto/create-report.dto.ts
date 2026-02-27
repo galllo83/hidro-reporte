@@ -15,6 +15,21 @@ class LocationDto {
   lng: number;
 }
 
+export class AddressDto {
+  @ApiProperty({ example: 'Calle 5 de Mayo', description: 'Street name' })
+  @IsNotEmpty()
+  street: string;
+
+  @ApiProperty({ example: 'Centro', description: 'Neighborhood' })
+  @IsNotEmpty()
+  neighborhood: string;
+
+  @ApiProperty({ example: '42000', description: 'Postal Code' })
+  @IsNotEmpty()
+  postalCode: string;
+}
+
+
 export class CreateReportDto {
   @ApiProperty({
     enum: ReportType,
@@ -31,4 +46,10 @@ export class CreateReportDto {
   @Type(() => LocationDto)
   @IsNotEmpty()
   location: LocationDto;
+
+  @ApiProperty({ type: AddressDto, required: false })
+  @ValidateNested()
+  @Type(() => AddressDto)
+  address?: AddressDto;
 }
+

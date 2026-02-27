@@ -5,4 +5,6 @@ export interface IReportService {
   createReport(userId: string, dto: CreateReportDto): Promise<ReportModel>;
   getReportsByZone(zoneId: string): Promise<ReportModel[]>;
   getAllReports(): Promise<ReportModel[]>;
+  markAsAttended(reportId: string): Promise<ReportModel>;
 }
+

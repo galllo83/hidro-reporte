@@ -4,6 +4,7 @@ import { apiClient } from '../../../core/api/api.config';
 export interface Zone {
     id: string;
     name: string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     polygon: any; // GeoJSON Polygon
     status?: 'WATER_FLOWING' | 'NO_WATER' | string;
     isActive: boolean;
@@ -22,14 +23,16 @@ export const useZones = () => {
         try {
             const response = await apiClient.get<Zone[]>('/zones');
             setZones(response.data);
-        } catch (err: any) {
-            console.error('Error fetching zones:', err);
-            setError(err.response?.data?.message || 'Error al cargar las zonas');
+        } catch (err: unknown) {
+            const typedErr = err as { response?: { data?: { message?: string } } };
+            console.error('Error fetching zones:', typedErr);
+            setError(typedErr.response?.data?.message || 'Error al cargar las zonas');
         } finally {
             setIsLoading(false);
         }
     }, []);
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const createZone = async (name: string, geojson: any) => {
         setIsLoading(true);
         setError(null);
@@ -40,13 +43,14 @@ export const useZones = () => {
             });
             setZones(prev => [...prev, response.data]);
             return response.data;
-        } catch (err: any) {
-            console.error('Error creating zone:', err);
+        } catch (err: unknown) {
+            const typedErr = err as { response?: { data?: { message?: string | string[] } } };
+            console.error('Error creating zone:', typedErr);
             let errorMessage = 'Error al guardar la zona';
-            if (err.response?.data?.message) {
-                errorMessage = Array.isArray(err.response.data.message)
-                    ? err.response.data.message.join(', ')
-                    : err.response.data.message;
+            if (typedErr.response?.data?.message) {
+                errorMessage = Array.isArray(typedErr.response.data.message)
+                    ? typedErr.response.data.message.join(', ')
+                    : typedErr.response.data.message;
             }
             setError(errorMessage);
             throw new Error(errorMessage);

@@ -44,9 +44,16 @@ export const authRepository = {
                 user,
                 token: accessToken
             };
-        } catch (error: any) {
-            console.error("Auth Repository Register Error:", error);
-            throw new Error(error.message || 'Error de red durante el registro');
+        } catch (error: unknown) {
+            const typedErr = error as { response?: { data?: { message?: string | string[] } } };
+            let errorMsg = 'Error al registrar el usuario';
+
+            if (typedErr.response?.data?.message) {
+                const messageData = typedErr.response.data.message;
+                errorMsg = Array.isArray(messageData) ? messageData.join(', ') : messageData;
+            }
+
+            throw new Error(errorMsg);
         }
     },
 
@@ -91,9 +98,10 @@ export const authRepository = {
                 user,
                 token: accessToken
             };
-        } catch (error: any) {
-            console.error("Auth Repository Error:", error);
-            throw new Error(error.message || 'Error de red durante el inicio de sesión');
+        } catch (error: unknown) {
+            const typedErr = error as Error;
+            console.error("Auth Repository Error:", typedErr);
+            throw new Error(typedErr.message || 'Error de red durante el inicio de sesión');
         }
     },
 

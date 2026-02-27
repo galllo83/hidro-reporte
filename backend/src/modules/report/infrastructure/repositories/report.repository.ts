@@ -10,7 +10,7 @@ export class ReportRepository implements IReportRepository {
   constructor(
     @InjectRepository(ReportOrmEntity)
     private readonly reportRepository: Repository<ReportOrmEntity>,
-  ) {}
+  ) { }
 
   private mapToDomain(entity: ReportOrmEntity): ReportModel {
     return new ReportModel(
@@ -20,11 +20,19 @@ export class ReportRepository implements IReportRepository {
       entity.type,
       entity.location
         ? {
-            lat: entity.location.coordinates[1],
-            lng: entity.location.coordinates[0],
-          }
+          lat: entity.location.coordinates[1],
+          lng: entity.location.coordinates[0],
+        }
         : { lat: 0, lng: 0 },
       entity.createdAt,
+      entity.isAttended,
+      entity.street
+        ? {
+          street: entity.street,
+          neighborhood: entity.neighborhood,
+          postalCode: entity.postalCode,
+        }
+        : undefined,
     );
   }
 
@@ -41,6 +49,10 @@ export class ReportRepository implements IReportRepository {
       zoneId: report.zoneId,
       type: report.type,
       location: point,
+      street: report.address?.street,
+      neighborhood: report.address?.neighborhood,
+      postalCode: report.address?.postalCode,
+      isAttended: report.isAttended || false,
     });
 
     const saved = await this.reportRepository.save(entity);
@@ -61,4 +73,38 @@ export class ReportRepository implements IReportRepository {
     });
     return entities.map((e) => this.mapToDomain(e));
   }
+
+  async findById(id: string): Promise<ReportModel | null> {
+    const entity = await this.reportRepository.findOne({ where: { id } });
+    if (!entity) return null;
+    return this.mapToDomain(entity);
+  }
+
+  async update(
+    id: string,
+    data: Partial<ReportModel>,
+  ): Promise<ReportModel> {
+    const updateData: any = { ...data };
+
+    // Flatten address if provided
+    if (data.address) {
+      updateData.street = data.address.street;
+      updateData.neighborhood = data.address.neighborhood;
+      updateData.postalCode = data.address.postalCode;
+      delete updateData.address;
+    }
+
+    // Convert location if provided
+    if (data.location) {
+      updateData.location = {
+        type: 'Point',
+        coordinates: [data.location.lng, data.location.lat],
+      };
+    }
+
+    await this.reportRepository.update(id, updateData);
+    const updatedEntity = await this.reportRepository.findOne({ where: { id } });
+    return this.mapToDomain(updatedEntity!);
+  }
 }
+
