@@ -52,6 +52,14 @@ export class ReportController {
     return this.reportService.getAllReports();
   }
 
+  @Get('stats')
+  @Roles(Role.ADMIN)
+  @ApiOperation({ summary: 'Get aggregated report stats grouped by zone/neighborhood for charts' })
+  @ApiResponse({ status: 200, description: 'Returns an array of stats suitable for Recharts API.' })
+  async getReportStats() {
+    return this.reportService.getReportStatsByZone();
+  }
+
   @Get('history')
   @Roles(Role.USER, Role.ADMIN)
   @ApiOperation({ summary: 'Get personal reports history for current user' })

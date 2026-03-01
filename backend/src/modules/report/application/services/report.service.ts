@@ -77,4 +77,8 @@ export class ReportService implements IReportService {
     }
     return this.reportRepository.update(reportId, { isAttended: true });
   }
+
+  async getReportStatsByZone(): Promise<any[]> {
+    return this.reportRepository.getReportStatsByZone();
+  }
 }

@@ -28,5 +28,10 @@ export const reportRepo = {
         const query = params.toString() ? `?${params.toString()}` : '';
         const response = await apiClient.get<ReportResponse[]>(`/reports/history${query}`);
         return response.data;
+    },
+
+    async getReportStats(): Promise<any[]> {
+        const response = await apiClient.get<any[]>('/reports/stats');
+        return response.data;
     }
 };

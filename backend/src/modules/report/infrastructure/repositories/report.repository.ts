@@ -129,5 +129,33 @@ export class ReportRepository implements IReportRepository {
     const updatedEntity = await this.reportRepository.findOne({ where: { id } });
     return this.mapToDomain(updatedEntity!);
   }
+
+  async getReportStatsByZone(): Promise<any[]> {
+    // TypeORM query to count reports grouped by neighborhood and type
+    const stats = await this.reportRepository
+      .createQueryBuilder('report')
+      .select('report.neighborhood', 'neighborhood')
+      .addSelect('report.type', 'type')
+      .addSelect('COUNT(report.id)', 'count')
+      .where('report.neighborhood IS NOT NULL') // Only include reports with a neighborhood
+      .groupBy('report.neighborhood')
+      .addGroupBy('report.type')
+      .getRawMany();
+
+    // The raw result is flat: [{ neighborhood: 'Centro', type: 'LEAK_REPORTED', count: '5' }, ...]
+    // We need to pivot this for Recharts: [{ neighborhood: 'Centro', SUPPLY_RESTORED: 10, LEAK_REPORTED: 5, ... }]
+    const pivotedStats: Record<string, any> = {};
+
+    for (const stat of stats) {
+      const { neighborhood, type, count } = stat;
+      if (!pivotedStats[neighborhood]) {
+        pivotedStats[neighborhood] = { neighborhood };
+      }
+      // PostgreSQL COUNT returns a string, so we parse it to a number
+      pivotedStats[neighborhood][type] = parseInt(count, 10);
+    }
+
+    return Object.values(pivotedStats);
+  }
 }
 
