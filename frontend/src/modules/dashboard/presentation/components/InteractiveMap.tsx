@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { MapContainer, TileLayer, FeatureGroup, GeoJSON, Popup, Marker } from 'react-leaflet';
+import { MapContainer, TileLayer, FeatureGroup, GeoJSON, Popup, Marker, useMap } from 'react-leaflet';
 import { EditControl } from 'react-leaflet-draw';
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, Input, useDisclosure } from '@heroui/react';
-import { CheckCircle2 } from 'lucide-react';
+import { CheckCircle2, Search, Navigation } from 'lucide-react';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-draw/dist/leaflet.draw.css';
 
@@ -75,6 +75,76 @@ const ZonePopup = ({ zone }: { zone: Zone }) => {
     );
 };
 
+const MapControls = () => {
+    const map = useMap();
+    const [searchQuery, setSearchQuery] = useState('');
+    const [isSearching, setIsSearching] = useState(false);
+
+    const handleSearch = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!searchQuery.trim()) return;
+
+        setIsSearching(true);
+        try {
+            const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchQuery)}`);
+            const data = await response.json();
+
+            if (data && data.length > 0) {
+                const { lat, lon } = data[0];
+                map.flyTo([parseFloat(lat), parseFloat(lon)], 15);
+            }
+        } catch (error) {
+            console.error('Error searching location:', error);
+        } finally {
+            setIsSearching(false);
+        }
+    };
+
+    const handleLocateMe = () => {
+        if ('geolocation' in navigator) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const { latitude, longitude } = position.coords;
+                    map.flyTo([latitude, longitude], 15);
+                },
+                (error) => {
+                    console.error('Error getting location:', error);
+                }
+            );
+        }
+    };
+
+    return (
+        <div className="absolute top-4 left-4 sm:left-14 z-[1000] flex flex-col gap-2 pointer-events-auto w-[calc(100%-2rem)] sm:w-64 max-w-xs">
+            <form onSubmit={handleSearch} className="relative">
+                <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Buscar colonia, municipio..."
+                    className="w-full bg-[#1f2937]/90 backdrop-blur border border-gray-600 text-gray-200 text-sm rounded-lg focus:ring-cyan-500 focus:border-cyan-500 block px-3 py-2.5 pr-10 shadow-lg outline-none"
+                    disabled={isSearching}
+                />
+                <button
+                    type="submit"
+                    className="absolute inset-y-0 right-0 flex items-center pr-3 outline-none"
+                    disabled={isSearching}
+                >
+                    <Search className={`w-4 h-4 text-gray-400 hover:text-cyan-400 transition-colors ${isSearching ? 'opacity-50' : ''}`} />
+                </button>
+            </form>
+            <button
+                onClick={handleLocateMe}
+                className="self-start flex items-center gap-2 bg-[#1f2937]/90 backdrop-blur border border-gray-600 text-gray-200 hover:bg-gray-700 hover:text-cyan-400 text-xs font-semibold px-3 py-2 rounded-lg shadow-lg transition-colors outline-none cursor-pointer"
+                title="Ir a mi ubicación actual"
+            >
+                <Navigation className="w-4 h-4" />
+                Mi ubicación
+            </button>
+        </div>
+    );
+};
+
 export const InteractiveMap = () => {
     const { zones, fetchZones, createZone, isLoading } = useZones();
     const { leakReports, fetchLeakReports, markLeakAsAttended } = useLeakReports();
@@ -105,7 +175,7 @@ export const InteractiveMap = () => {
         const LAny = L as any;
         if (LAny.drawLocal) {
             const drawLocal = LAny.drawLocal;
-            drawLocal.draw.toolbar.buttons.polygon = 'Dibujar una zona (polígono)';
+            drawLocal.draw.toolbar.buttons.polygon = 'Crear polígono';
             drawLocal.draw.handlers.polygon.tooltip.start = 'Haga clic para empezar a dibujar la zona.';
             drawLocal.draw.handlers.polygon.tooltip.cont = 'Haga clic para continuar dibujando.';
             drawLocal.draw.handlers.polygon.tooltip.end = 'Haga clic en el primer punto para cerrar esta zona.';
@@ -194,6 +264,7 @@ export const InteractiveMap = () => {
                 style={{ height: '100%', width: '100%', backgroundColor: '#091524' }}
                 zoomControl={false}
             >
+                <MapControls />
                 <TileLayer
                     url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
