@@ -1,7 +1,8 @@
 import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { useReportStats } from '../../../report/application/useReportStats';
-import { useEffect, useState } from 'react';
-import { BarChart3, Search } from 'lucide-react';
+import { useZones } from '../../application/useZones';
+import { useEffect, useState, useRef } from 'react';
+import { BarChart3, Search, ChevronDown } from 'lucide-react';
 
 export const StatsChart = () => {
     // Default to today
@@ -12,8 +13,11 @@ export const StatsChart = () => {
     // Search by Zone Name
     const [zoneNameInput, setZoneNameInput] = useState('');
     const [debouncedZoneName, setDebouncedZoneName] = useState('');
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const dropdownRef = useRef<HTMLDivElement>(null);
 
     const { stats, isLoading, error, fetchStats } = useReportStats();
+    const { zones, fetchZones } = useZones();
 
     // Debounce effect
     useEffect(() => {
@@ -22,6 +26,20 @@ export const StatsChart = () => {
         }, 500);
         return () => clearTimeout(handler);
     }, [zoneNameInput]);
+
+    useEffect(() => {
+        fetchZones();
+    }, [fetchZones]);
+
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+                setIsDropdownOpen(false);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
 
     useEffect(() => {
         fetchStats({
@@ -42,8 +60,8 @@ export const StatsChart = () => {
 
                 {/* Filters */}
                 <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
-                    {/* Search by Polygon Name */}
-                    <div className="relative w-full sm:w-48">
+                    {/* Searchable Dropdown by Polygon Name */}
+                    <div className="relative w-full sm:w-56" ref={dropdownRef}>
                         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <Search className="h-4 w-4 text-gray-500" />
                         </div>
@@ -51,9 +69,48 @@ export const StatsChart = () => {
                             type="text"
                             placeholder="Buscar polígono..."
                             value={zoneNameInput}
-                            onChange={(e) => setZoneNameInput(e.target.value)}
-                            className="bg-[#1f2937] border border-gray-700 text-gray-300 text-xs rounded-xl focus:ring-cyan-500 focus:border-cyan-500 block w-full pl-9 px-3 py-2 outline-none transition-colors"
+                            onChange={(e) => {
+                                setZoneNameInput(e.target.value);
+                                setIsDropdownOpen(true);
+                            }}
+                            onFocus={() => setIsDropdownOpen(true)}
+                            className="bg-[#1f2937] border border-gray-700 text-gray-300 text-xs rounded-xl focus:ring-cyan-500 focus:border-cyan-500 block w-full pl-9 pr-9 px-3 py-2 outline-none transition-colors"
                         />
+                        <div
+                            className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer"
+                            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                        >
+                            <ChevronDown className={`h-4 w-4 text-gray-500 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
+                        </div>
+
+                        {/* Dropdown Menu */}
+                        {isDropdownOpen && (
+                            <div className="absolute z-50 mt-1 w-full bg-[#1f2937] border border-gray-700 rounded-xl shadow-lg max-h-48 overflow-y-auto custom-scrollbar">
+                                <div
+                                    className="px-3 py-2 text-xs text-gray-300 hover:bg-[#374151] cursor-pointer"
+                                    onClick={() => {
+                                        setZoneNameInput('');
+                                        setIsDropdownOpen(false);
+                                    }}
+                                >
+                                    Todos los polígonos
+                                </div>
+                                {zones
+                                    .filter(z => z.name.toLowerCase().includes(zoneNameInput.toLowerCase()))
+                                    .map(zone => (
+                                        <div
+                                            key={zone.id}
+                                            className="px-3 py-2 text-xs text-gray-300 hover:bg-[#374151] cursor-pointer"
+                                            onClick={() => {
+                                                setZoneNameInput(zone.name);
+                                                setIsDropdownOpen(false);
+                                            }}
+                                        >
+                                            {zone.name}
+                                        </div>
+                                    ))}
+                            </div>
+                        )}
                     </div>
 
                     {/* Date Filters */}
