@@ -137,8 +137,7 @@ export class ReportRepository implements IReportRepository {
       .leftJoin('report.zone', 'zone')
       .select('zone.name', 'neighborhood') // Map zone name to 'neighborhood' to keep frontend intact
       .addSelect('report.type', 'type')
-      .addSelect('COUNT(report.id)', 'count')
-      .where('report.zoneId IS NOT NULL'); // Only include reports inside a polygon
+      .addSelect('COUNT(report.id)', 'count');
 
     if (filters?.year) {
       qb.andWhere("EXTRACT(YEAR FROM report.createdAt AT TIME ZONE 'UTC' AT TIME ZONE 'America/Mexico_City') = :year", { year: filters.year });
