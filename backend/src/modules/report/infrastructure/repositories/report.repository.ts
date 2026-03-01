@@ -131,13 +131,14 @@ export class ReportRepository implements IReportRepository {
   }
 
   async getReportStatsByZone(filters?: { day?: number, month?: number, year?: number }): Promise<any[]> {
-    // TypeORM query to count reports grouped by neighborhood and type
+    // TypeORM query to count reports grouped by polygon (zone) and type
     const qb = this.reportRepository
       .createQueryBuilder('report')
-      .select('report.neighborhood', 'neighborhood')
+      .leftJoin('report.zone', 'zone')
+      .select('zone.name', 'neighborhood') // Map zone name to 'neighborhood' to keep frontend intact
       .addSelect('report.type', 'type')
       .addSelect('COUNT(report.id)', 'count')
-      .where('report.neighborhood IS NOT NULL'); // Only include reports with a neighborhood
+      .where('report.zoneId IS NOT NULL'); // Only include reports inside a polygon
 
     if (filters?.year) {
       qb.andWhere("EXTRACT(YEAR FROM report.createdAt AT TIME ZONE 'UTC' AT TIME ZONE 'America/Mexico_City') = :year", { year: filters.year });
@@ -150,7 +151,7 @@ export class ReportRepository implements IReportRepository {
     }
 
     const stats = await qb
-      .groupBy('report.neighborhood')
+      .groupBy('zone.name')
       .addGroupBy('report.type')
       .getRawMany();
 
@@ -160,11 +161,14 @@ export class ReportRepository implements IReportRepository {
 
     for (const stat of stats) {
       const { neighborhood, type, count } = stat;
-      if (!pivotedStats[neighborhood]) {
-        pivotedStats[neighborhood] = { neighborhood };
+      // If a zone has no name, fallback to 'Desconocido'
+      const zoneName = neighborhood || 'Desconocido';
+
+      if (!pivotedStats[zoneName]) {
+        pivotedStats[zoneName] = { neighborhood: zoneName };
       }
       // PostgreSQL COUNT returns a string, so we parse it to a number
-      pivotedStats[neighborhood][type] = parseInt(count, 10);
+      pivotedStats[zoneName][type] = parseInt(count, 10);
     }
 
     return Object.values(pivotedStats);
