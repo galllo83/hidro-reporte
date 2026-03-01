@@ -55,8 +55,8 @@ export class ReportService implements IReportService {
     });
   }
 
-  async getReportsByZone(zoneId: string): Promise<ReportModel[]> {
-    return this.reportRepository.findByZone(zoneId);
+  async getReportsByZone(zoneId: string, filters?: { day?: number, month?: number, year?: number }): Promise<ReportModel[]> {
+    return this.reportRepository.findByZone(zoneId, filters);
   }
 
   getAllReports(): Promise<ReportModel[]> {

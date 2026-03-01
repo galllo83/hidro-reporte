@@ -89,11 +89,22 @@ export class ReportRepository implements IReportRepository {
     return entities.map((e) => this.mapToDomain(e));
   }
 
-  async findByZone(zoneId: string): Promise<ReportModel[]> {
-    const entities = await this.reportRepository.find({
-      where: { zoneId },
-      order: { createdAt: 'DESC' },
-    });
+  async findByZone(zoneId: string, filters?: { day?: number, month?: number, year?: number }): Promise<ReportModel[]> {
+    const queryBuilder = this.reportRepository.createQueryBuilder('report')
+      .where('report.zoneId = :zoneId', { zoneId })
+      .orderBy('report.createdAt', 'DESC');
+
+    if (filters?.year) {
+      queryBuilder.andWhere('EXTRACT(YEAR FROM report.createdAt) = :year', { year: filters.year });
+    }
+    if (filters?.month) {
+      queryBuilder.andWhere('EXTRACT(MONTH FROM report.createdAt) = :month', { month: filters.month });
+    }
+    if (filters?.day) {
+      queryBuilder.andWhere('EXTRACT(DAY FROM report.createdAt) = :day', { day: filters.day });
+    }
+
+    const entities = await queryBuilder.getMany();
     return entities.map((e) => this.mapToDomain(e));
   }
 

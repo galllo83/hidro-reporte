@@ -31,8 +31,12 @@ const ZonePopup = ({ zone }: { zone: Zone }) => {
 
     useEffect(() => {
         let isMounted = true;
+        const now = new Date();
+        const y = now.getFullYear();
+        const m = now.getMonth() + 1;
+        const d = now.getDate();
 
-        apiClient.get(`/reports/zone/${zone.id}`)
+        apiClient.get(`/reports/zone/${zone.id}?day=${d}&month=${m}&year=${y}`)
             .then((res: { data: Array<{ type: string }> }) => {
                 if (isMounted) {
                     setReports(res.data);

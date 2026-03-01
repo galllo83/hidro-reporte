@@ -96,8 +96,18 @@ export class ReportController {
     status: 200,
     description: 'Returns reports matched to the given zone.',
   })
-  async getReportsByZone(@Param('zoneId') zoneId: string) {
-    return this.reportService.getReportsByZone(zoneId);
+  async getReportsByZone(
+    @Param('zoneId') zoneId: string,
+    @Query('day') day?: string,
+    @Query('month') month?: string,
+    @Query('year') year?: string,
+  ) {
+    const filters = {
+      day: day ? parseInt(day, 10) : undefined,
+      month: month ? parseInt(month, 10) : undefined,
+      year: year ? parseInt(year, 10) : undefined,
+    };
+    return this.reportService.getReportsByZone(zoneId, filters);
   }
 
   @Patch(':id/attend')
