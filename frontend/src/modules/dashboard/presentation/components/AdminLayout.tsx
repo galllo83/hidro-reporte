@@ -1,9 +1,16 @@
 import type { ReactNode } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useLogin } from '../../../auth/application/useLogin';
 
-export const AdminLayout = ({ children }: { children: ReactNode }) => {
+interface AdminLayoutProps {
+    children: ReactNode;
+    title?: string;
+    description?: string;
+}
+
+export const AdminLayout = ({ children, title = 'Gestión de Zonas', description = 'Dibuja y administra los polígonos de distribución de agua.' }: AdminLayoutProps) => {
     const navigate = useNavigate();
+    const location = useLocation();
     const { logout, user } = useLogin();
 
     const handleLogout = () => {
@@ -32,17 +39,23 @@ export const AdminLayout = ({ children }: { children: ReactNode }) => {
                 <nav className="flex-1 py-6 px-4 flex flex-col gap-2">
                     <div className="text-[11px] font-semibold text-white/40 uppercase tracking-widest mb-2 px-2">Menú Principal</div>
 
-                    <button className="flex items-center w-full px-4 py-3 rounded-xl bg-cyan-500/10 text-cyan-300 border border-cyan-500/30 transition-all group">
+                    <button
+                        onClick={() => navigate('/dashboard')}
+                        className={`flex items-center w-full px-4 py-3 rounded-xl transition-all group ${location.pathname === '/dashboard' ? 'bg-cyan-500/10 text-cyan-300 border border-cyan-500/30' : 'text-white/60 hover:text-white hover:bg-white/5 border border-transparent'}`}
+                    >
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="mr-3"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
                         <span className="text-[14px] font-medium">Gestión de Zonas</span>
                     </button>
 
-                    <button className="flex items-center w-full px-4 py-3 rounded-xl text-white/60 hover:text-white hover:bg-white/5 transition-all group mt-2">
+                    <button className="flex items-center w-full px-4 py-3 rounded-xl text-white/60 hover:text-white hover:bg-white/5 border border-transparent transition-all group mt-2 opacity-50 cursor-not-allowed">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="mr-3"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><polyline points="16 11 18 13 22 9"></polyline></svg>
                         <span className="text-[14px] font-medium">Usuarios</span>
                     </button>
 
-                    <button className="flex items-center w-full px-4 py-3 rounded-xl text-white/60 hover:text-white hover:bg-white/5 transition-all group mt-2">
+                    <button
+                        onClick={() => navigate('/dashboard/reports')}
+                        className={`flex items-center w-full px-4 py-3 rounded-xl transition-all group mt-2 ${location.pathname === '/dashboard/reports' ? 'bg-cyan-500/10 text-cyan-300 border border-cyan-500/30' : 'text-white/60 hover:text-white hover:bg-white/5 border border-transparent'}`}
+                    >
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="mr-3"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
                         <span className="text-[14px] font-medium">Reportes Históricos</span>
                     </button>
@@ -75,8 +88,8 @@ export const AdminLayout = ({ children }: { children: ReactNode }) => {
                 {/* Header Sub-bar */}
                 <header className="h-[72px] bg-[#0b101a]/80 backdrop-blur-md border-b border-cyan-500/10 flex items-center justify-between px-8 z-10 shrink-0">
                     <div>
-                        <h2 className="text-[18px] font-semibold text-white tracking-wide">Gestión de Zonas</h2>
-                        <p className="text-[12px] text-white/50 mt-0.5">Dibuja y administra los polígonos de distribución de agua.</p>
+                        <h2 className="text-[18px] font-semibold text-white tracking-wide">{title}</h2>
+                        <p className="text-[12px] text-white/50 mt-0.5">{description}</p>
                     </div>
 
                     <div className="flex items-center gap-4">

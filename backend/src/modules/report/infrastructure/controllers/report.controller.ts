@@ -56,8 +56,17 @@ export class ReportController {
   @Roles(Role.ADMIN)
   @ApiOperation({ summary: 'Get aggregated report stats grouped by zone/neighborhood for charts' })
   @ApiResponse({ status: 200, description: 'Returns an array of stats suitable for Recharts API.' })
-  async getReportStats() {
-    return this.reportService.getReportStatsByZone();
+  async getReportStats(
+    @Query('day') day?: string,
+    @Query('month') month?: string,
+    @Query('year') year?: string,
+  ) {
+    const filters = {
+      day: day ? parseInt(day, 10) : undefined,
+      month: month ? parseInt(month, 10) : undefined,
+      year: year ? parseInt(year, 10) : undefined,
+    };
+    return this.reportService.getReportStatsByZone(filters);
   }
 
   @Get('history')

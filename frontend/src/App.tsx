@@ -4,6 +4,7 @@ import { RegisterPage } from './modules/auth/presentation/RegisterPage';
 import { DashboardPage } from './modules/dashboard/presentation/DashboardPage';
 import { HomePage } from './modules/home/presentation/HomePage';
 import { MyReportsPage } from './modules/report/presentation/MyReportsPage';
+import { AdminReportsPage } from './modules/dashboard/presentation/AdminReportsPage';
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/dashboard" element={<DashboardPage />} />
+        <Route path="/dashboard/reports" element={<AdminReportsPage />} />
         <Route path="/home" element={<HomePage />} />
         <Route path="/my-reports" element={<MyReportsPage />} />
       </Routes>

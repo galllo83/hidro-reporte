@@ -130,14 +130,26 @@ export class ReportRepository implements IReportRepository {
     return this.mapToDomain(updatedEntity!);
   }
 
-  async getReportStatsByZone(): Promise<any[]> {
+  async getReportStatsByZone(filters?: { day?: number, month?: number, year?: number }): Promise<any[]> {
     // TypeORM query to count reports grouped by neighborhood and type
-    const stats = await this.reportRepository
+    const qb = this.reportRepository
       .createQueryBuilder('report')
       .select('report.neighborhood', 'neighborhood')
       .addSelect('report.type', 'type')
       .addSelect('COUNT(report.id)', 'count')
-      .where('report.neighborhood IS NOT NULL') // Only include reports with a neighborhood
+      .where('report.neighborhood IS NOT NULL'); // Only include reports with a neighborhood
+
+    if (filters?.year) {
+      qb.andWhere('EXTRACT(YEAR FROM report.createdAt) = :year', { year: filters.year });
+    }
+    if (filters?.month) {
+      qb.andWhere('EXTRACT(MONTH FROM report.createdAt) = :month', { month: filters.month });
+    }
+    if (filters?.day) {
+      qb.andWhere('EXTRACT(DAY FROM report.createdAt) = :day', { day: filters.day });
+    }
+
+    const stats = await qb
       .groupBy('report.neighborhood')
       .addGroupBy('report.type')
       .getRawMany();

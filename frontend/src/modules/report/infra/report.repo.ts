@@ -30,8 +30,14 @@ export const reportRepo = {
         return response.data;
     },
 
-    async getReportStats(): Promise<any[]> {
-        const response = await apiClient.get<any[]>('/reports/stats');
+    async getReportStats(filters?: { day?: number, month?: number, year?: number }): Promise<any[]> {
+        const params = new URLSearchParams();
+        if (filters?.day) params.append('day', filters.day.toString());
+        if (filters?.month) params.append('month', filters.month.toString());
+        if (filters?.year) params.append('year', filters.year.toString());
+
+        const query = params.toString() ? `?${params.toString()}` : '';
+        const response = await apiClient.get<any[]>(`/reports/stats${query}`);
         return response.data;
     }
 };

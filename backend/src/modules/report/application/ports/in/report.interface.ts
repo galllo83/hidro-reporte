@@ -7,6 +7,6 @@ export interface IReportService {
   getAllReports(): Promise<ReportModel[]>;
   getUserReports(userId: string, filters?: { day?: number, month?: number, year?: number }): Promise<ReportModel[]>;
   markAsAttended(reportId: string): Promise<ReportModel>;
-  getReportStatsByZone(): Promise<any[]>;
+  getReportStatsByZone(filters?: { day?: number, month?: number, year?: number }): Promise<any[]>;
 }
 

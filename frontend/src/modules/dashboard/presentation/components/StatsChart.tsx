@@ -1,14 +1,19 @@
 import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { useReportStats } from '../../../report/application/useReportStats';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { BarChart3 } from 'lucide-react';
 
 export const StatsChart = () => {
+    // Default to today
+    const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear());
+    const [selectedMonth, setSelectedMonth] = useState<number>(new Date().getMonth() + 1);
+    const [selectedDay, setSelectedDay] = useState<number>(new Date().getDate());
+
     const { stats, isLoading, error, fetchStats } = useReportStats();
 
     useEffect(() => {
-        fetchStats();
-    }, [fetchStats]);
+        fetchStats({ day: selectedDay || undefined, month: selectedMonth || undefined, year: selectedYear || undefined });
+    }, [fetchStats, selectedDay, selectedMonth, selectedYear]);
 
     if (error) {
         return (
@@ -37,10 +42,76 @@ export const StatsChart = () => {
 
     return (
         <div className="w-full h-full bg-[#111928]/60 backdrop-blur-md border border-gray-800 rounded-2xl p-6 flex flex-col shadow-[0_0_30px_rgba(0,0,0,0.5)]">
-            <h3 className="text-lg font-bold text-gray-200 mb-6 flex items-center gap-2">
-                <BarChart3 className="w-5 h-5 text-cyan-400" />
-                Reportes por Colonia
-            </h3>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-4">
+                <h3 className="text-lg font-bold text-gray-200 flex items-center gap-2">
+                    <BarChart3 className="w-5 h-5 text-cyan-400" />
+                    Reportes por Colonia
+                </h3>
+
+                {/* Date Filters */}
+                <div className="flex items-center gap-3">
+                    <div className="relative">
+                        <select
+                            value={selectedDay}
+                            onChange={(e) => setSelectedDay(Number(e.target.value))}
+                            className="appearance-none bg-[#1f2937] border border-gray-700 text-gray-300 text-xs rounded-xl focus:ring-cyan-500 focus:border-cyan-500 block w-full px-3 py-2 pr-8"
+                        >
+                            <option value={0}>Día (Todos)</option>
+                            {Array.from({ length: 31 }, (_, i) => i + 1).map((d) => (
+                                <option key={d} value={d}>
+                                    {d}
+                                </option>
+                            ))}
+                        </select>
+                        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-400">
+                            <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" /></svg>
+                        </div>
+                    </div>
+
+                    <div className="relative">
+                        <select
+                            value={selectedMonth}
+                            onChange={(e) => setSelectedMonth(Number(e.target.value))}
+                            className="appearance-none bg-[#1f2937] border border-gray-700 text-gray-300 text-xs rounded-xl focus:ring-cyan-500 focus:border-cyan-500 block w-full px-3 py-2 pr-8"
+                        >
+                            <option value={0}>Mes (Todos)</option>
+                            <option value={1}>Enero</option>
+                            <option value={2}>Febrero</option>
+                            <option value={3}>Marzo</option>
+                            <option value={4}>Abril</option>
+                            <option value={5}>Mayo</option>
+                            <option value={6}>Junio</option>
+                            <option value={7}>Julio</option>
+                            <option value={8}>Agosto</option>
+                            <option value={9}>Septiembre</option>
+                            <option value={10}>Octubre</option>
+                            <option value={11}>Noviembre</option>
+                            <option value={12}>Diciembre</option>
+                        </select>
+                        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-400">
+                            <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" /></svg>
+                        </div>
+                    </div>
+
+                    <div className="relative">
+                        <select
+                            value={selectedYear}
+                            onChange={(e) => setSelectedYear(Number(e.target.value))}
+                            className="appearance-none bg-[#1f2937] border border-gray-700 text-gray-300 text-xs rounded-xl focus:ring-cyan-500 focus:border-cyan-500 block w-full px-3 py-2 pr-8"
+                        >
+                            <option value={0}>Año (Todos)</option>
+                            {Array.from({ length: 5 }, (_, i) => new Date().getFullYear() - i).map((y) => (
+                                <option key={y} value={y}>
+                                    {y}
+                                </option>
+                            ))}
+                        </select>
+                        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-400">
+                            <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" /></svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div className="flex-1 w-full min-h-[300px]">
                 <ResponsiveContainer width="100%" height="100%">
                     <BarChart
