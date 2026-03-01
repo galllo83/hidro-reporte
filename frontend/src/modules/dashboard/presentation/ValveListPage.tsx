@@ -85,8 +85,8 @@ export const ValveListPage = () => {
                 valA = a.status || 'ZZZ';
                 valB = b.status || 'ZZZ';
             } else if (sortField === 'createdAt') {
-                valA = a.createdAt;
-                valB = b.createdAt;
+                valA = a.updatedAt;
+                valB = b.updatedAt;
             }
             if (valA < valB) return sortDir === 'asc' ? -1 : 1;
             if (valA > valB) return sortDir === 'asc' ? 1 : -1;
@@ -168,11 +168,10 @@ export const ValveListPage = () => {
                                             onClick={() => handleSort('createdAt')}
                                             className="flex items-center gap-2 hover:text-cyan-400 transition-colors font-semibold"
                                         >
-                                            Creado
+                                            Actualizado
                                             <SortIcon field="createdAt" sortField={sortField} sortDir={sortDir} />
                                         </button>
                                     </th>
-                                    <th className="px-6 py-4">ID de Zona</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-800/50">
@@ -211,13 +210,10 @@ export const ValveListPage = () => {
                                                 <StatusBadge status={zone.status} />
                                             </td>
                                             <td className="px-6 py-4 text-gray-400 text-xs font-mono">
-                                                {new Date(zone.createdAt).toLocaleDateString('es-MX', {
+                                                {new Date(zone.updatedAt).toLocaleDateString('es-MX', {
                                                     year: 'numeric', month: 'short', day: 'numeric',
                                                     hour: '2-digit', minute: '2-digit'
                                                 })}
-                                            </td>
-                                            <td className="px-6 py-4 text-gray-600 text-xs font-mono truncate max-w-[140px]" title={zone.id}>
-                                                {zone.id.slice(0, 8)}...
                                             </td>
                                         </tr>
                                     ))
