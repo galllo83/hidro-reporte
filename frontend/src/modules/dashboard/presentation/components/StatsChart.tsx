@@ -20,7 +20,7 @@ export const StatsChart = () => {
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-4">
                 <h3 className="text-lg font-bold text-gray-200 flex items-center gap-2">
                     <BarChart3 className="w-5 h-5 text-cyan-400" />
-                    Reportes por Colonia
+                    Reportes por Polígono
                 </h3>
 
                 {/* Date Filters */}
