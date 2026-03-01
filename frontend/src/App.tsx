@@ -5,6 +5,7 @@ import { DashboardPage } from './modules/dashboard/presentation/DashboardPage';
 import { HomePage } from './modules/home/presentation/HomePage';
 import { MyReportsPage } from './modules/report/presentation/MyReportsPage';
 import { AdminReportsPage } from './modules/dashboard/presentation/AdminReportsPage';
+import { ValveListPage } from './modules/dashboard/presentation/ValveListPage';
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
         <Route path="/dashboard/reports" element={<AdminReportsPage />} />
         <Route path="/home" element={<HomePage />} />
         <Route path="/my-reports" element={<MyReportsPage />} />
+        <Route path="/dashboard/valves" element={<ValveListPage />} />
       </Routes>
     </BrowserRouter>
   );
