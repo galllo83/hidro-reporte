@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEnum, IsNotEmpty, IsNumber, ValidateNested } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsNumber, ValidateNested, IsOptional } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ReportType } from '../../domain/entities/report.model';
 
@@ -16,17 +16,17 @@ class LocationDto {
 }
 
 export class AddressDto {
-  @ApiProperty({ example: 'Calle 5 de Mayo', description: 'Street name' })
-  @IsNotEmpty()
-  street: string;
+  @ApiProperty({ example: 'Calle 5 de Mayo', description: 'Street name', required: false })
+  @IsOptional()
+  street?: string;
 
-  @ApiProperty({ example: 'Centro', description: 'Neighborhood' })
-  @IsNotEmpty()
-  neighborhood: string;
+  @ApiProperty({ example: 'Centro', description: 'Neighborhood', required: false })
+  @IsOptional()
+  neighborhood?: string;
 
-  @ApiProperty({ example: '42000', description: 'Postal Code' })
-  @IsNotEmpty()
-  postalCode: string;
+  @ApiProperty({ example: '42000', description: 'Postal Code', required: false })
+  @IsOptional()
+  postalCode?: string;
 }
 
 

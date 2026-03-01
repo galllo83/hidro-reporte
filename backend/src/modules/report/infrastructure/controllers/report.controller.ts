@@ -8,6 +8,7 @@ import {
   Request,
   UseGuards,
   Inject,
+  Query,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -49,6 +50,24 @@ export class ReportController {
   @ApiResponse({ status: 200, description: 'Returns an array of all reports.' })
   async getAllReports() {
     return this.reportService.getAllReports();
+  }
+
+  @Get('history')
+  @Roles(Role.USER, Role.ADMIN)
+  @ApiOperation({ summary: 'Get personal reports history for current user' })
+  @ApiResponse({ status: 200, description: 'Returns an array of user reports.' })
+  async getUserReports(
+    @Request() req,
+    @Query('day') day?: string,
+    @Query('month') month?: string,
+    @Query('year') year?: string,
+  ) {
+    const filters = {
+      day: day ? parseInt(day, 10) : undefined,
+      month: month ? parseInt(month, 10) : undefined,
+      year: year ? parseInt(year, 10) : undefined,
+    };
+    return this.reportService.getUserReports(req.user.id, filters);
   }
 
   @Get('zone/:zoneId')

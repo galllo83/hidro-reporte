@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { LogOut, Droplet, Plus, MapPin, Hash, Trash2, Navigation, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { LogOut, Droplet, Plus, MapPin, Hash, Trash2, Navigation, AlertCircle, CheckCircle2, Calendar } from 'lucide-react';
 import { useWaterServices } from '../../water-service/application/useWaterServices';
 import { RegisterServiceForm } from '../../water-service/presentation/components/RegisterServiceForm';
 import { useGeolocationReport } from '../../report/application/useGeolocationReport';
@@ -53,13 +53,23 @@ export const HomePage = () => {
                         </div>
                     </div>
 
-                    <button
-                        onClick={handleLogout}
-                        className="flex items-center gap-2 px-5 py-2.5 bg-[#0b101a] text-red-400 border border-red-500/30 rounded-xl hover:bg-red-500/10 hover:border-red-400 focus:outline-none transition-all"
-                    >
-                        <LogOut className="w-4 h-4" />
-                        <span className="text-sm font-semibold tracking-wide uppercase">Cerrar Sesión</span>
-                    </button>
+                    <div className="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
+                        <button
+                            onClick={() => navigate('/my-reports')}
+                            className="w-full sm:w-auto flex justify-center items-center gap-2 px-5 py-2.5 bg-[#0b101a] text-cyan-400 border border-cyan-500/30 rounded-xl hover:bg-cyan-500/10 hover:border-cyan-400 focus:outline-none transition-all"
+                        >
+                            <Calendar className="w-4 h-4" />
+                            <span className="text-sm font-semibold tracking-wide uppercase shrink-0">Mis Reportes</span>
+                        </button>
+
+                        <button
+                            onClick={handleLogout}
+                            className="w-full sm:w-auto flex justify-center items-center gap-2 px-5 py-2.5 bg-[#0b101a] text-red-400 border border-red-500/30 rounded-xl hover:bg-red-500/10 hover:border-red-400 focus:outline-none transition-all"
+                        >
+                            <LogOut className="w-4 h-4" />
+                            <span className="text-sm font-semibold tracking-wide uppercase shrink-0">Cerrar Sesión</span>
+                        </button>
+                    </div>
                 </div>
 
                 {/* Geo-Reporting Quick Action Hero Section */}
@@ -103,7 +113,7 @@ export const HomePage = () => {
                                     </>
                                 ) : (
                                     <>
-                                        <Droplet className="w-6 h-6 animate-bounce" />
+                                        <Droplet fill="currentColor" className="w-6 h-6 animate-bounce" />
                                         <span>Llegó el Agua</span>
                                     </>
                                 )}
@@ -131,7 +141,7 @@ export const HomePage = () => {
                                     </>
                                 ) : (
                                     <>
-                                        <AlertCircle className="w-6 h-6 animate-pulse" />
+                                        <Droplet fill="currentColor" className="w-6 h-6 animate-pulse" />
                                         <span>Se Fue el Agua</span>
                                     </>
                                 )}
@@ -142,15 +152,15 @@ export const HomePage = () => {
                             disabled={isReporting}
                             className={`
                                 relative group overflow-hidden w-full md:w-64 h-16 sm:h-[136px] rounded-2xl font-bold text-lg uppercase tracking-wider
-                                transition-all duration-300 transform hover:-translate-y-1 hover:shadow-[0_0_40px_rgba(16,185,129,0.4)]
+                                transition-all duration-300 transform hover:-translate-y-1 hover:shadow-[0_0_40px_rgba(234,179,8,0.4)]
                                 active:scale-95 flex flex-row sm:flex-col items-center justify-center gap-3
                                 ${isReporting
                                     ? 'bg-gray-800 text-gray-400 border border-gray-700 cursor-not-allowed'
-                                    : 'bg-[#15201c] text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/10 hover:border-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.2)]'}
+                                    : 'bg-[#1a1712] text-yellow-500 border border-yellow-500/30 hover:bg-yellow-500/10 hover:border-yellow-400 shadow-[0_0_15px_rgba(234,179,8,0.2)]'}
                             `}
                         >
                             {!isReporting && (
-                                <div className="absolute inset-0 bg-emerald-500/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-in-out" />
+                                <div className="absolute inset-0 bg-yellow-500/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-in-out" />
                             )}
 
                             {isReporting && reportingType === 'LEAK_REPORTED' ? (
@@ -160,7 +170,10 @@ export const HomePage = () => {
                                 </>
                             ) : (
                                 <>
-                                    <Droplet className="w-6 h-6" style={{ fill: 'currentColor' }} />
+                                    <div className="relative">
+                                        <Droplet fill="currentColor" className="w-6 h-6" />
+                                        <div className="absolute top-1/2 left-1/2 w-8 h-[2px] bg-red-500 -translate-x-1/2 -translate-y-1/2 rotate-45 transform origin-center shadow-sm" />
+                                    </div>
                                     <span>Reportar Fuga</span>
                                 </>
                             )}

@@ -17,9 +17,9 @@ export class ReportModel {
     public readonly createdAt: Date,
     public readonly isAttended: boolean = false,
     public readonly address?: {
-      street: string;
-      neighborhood: string;
-      postalCode: string;
+      street?: string;
+      neighborhood?: string;
+      postalCode?: string;
     },
   ) { }
 }

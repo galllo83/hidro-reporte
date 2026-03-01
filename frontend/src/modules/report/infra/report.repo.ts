@@ -17,5 +17,16 @@ export const reportRepo = {
 
             throw error;
         }
+    },
+
+    async getUserHistory(filters?: { day?: number, month?: number, year?: number }): Promise<ReportResponse[]> {
+        const params = new URLSearchParams();
+        if (filters?.day) params.append('day', filters.day.toString());
+        if (filters?.month) params.append('month', filters.month.toString());
+        if (filters?.year) params.append('year', filters.year.toString());
+
+        const query = params.toString() ? `?${params.toString()}` : '';
+        const response = await apiClient.get<ReportResponse[]>(`/reports/history${query}`);
+        return response.data;
     }
 };

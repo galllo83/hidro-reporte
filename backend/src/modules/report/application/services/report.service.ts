@@ -63,6 +63,13 @@ export class ReportService implements IReportService {
     return this.reportRepository.findAll();
   }
 
+  async getUserReports(
+    userId: string,
+    filters?: { day?: number; month?: number; year?: number },
+  ): Promise<ReportModel[]> {
+    return this.reportRepository.findByUserId(userId, filters);
+  }
+
   async markAsAttended(reportId: string): Promise<ReportModel> {
     const report = await this.reportRepository.findById(reportId);
     if (!report) {

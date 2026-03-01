@@ -3,6 +3,7 @@ import { LoginPage } from './modules/auth/presentation/LoginPage';
 import { RegisterPage } from './modules/auth/presentation/RegisterPage';
 import { DashboardPage } from './modules/dashboard/presentation/DashboardPage';
 import { HomePage } from './modules/home/presentation/HomePage';
+import { MyReportsPage } from './modules/report/presentation/MyReportsPage';
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/home" element={<HomePage />} />
+        <Route path="/my-reports" element={<MyReportsPage />} />
       </Routes>
     </BrowserRouter>
   );
