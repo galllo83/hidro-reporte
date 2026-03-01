@@ -74,13 +74,13 @@ export class ReportRepository implements IReportRepository {
     qb.where('report.userId = :userId', { userId });
 
     if (filters?.year) {
-      qb.andWhere('EXTRACT(YEAR FROM report.createdAt) = :year', { year: filters.year });
+      qb.andWhere("EXTRACT(YEAR FROM report.createdAt AT TIME ZONE 'UTC' AT TIME ZONE 'America/Mexico_City') = :year", { year: filters.year });
     }
     if (filters?.month) {
-      qb.andWhere('EXTRACT(MONTH FROM report.createdAt) = :month', { month: filters.month });
+      qb.andWhere("EXTRACT(MONTH FROM report.createdAt AT TIME ZONE 'UTC' AT TIME ZONE 'America/Mexico_City') = :month", { month: filters.month });
     }
     if (filters?.day) {
-      qb.andWhere('EXTRACT(DAY FROM report.createdAt) = :day', { day: filters.day });
+      qb.andWhere("EXTRACT(DAY FROM report.createdAt AT TIME ZONE 'UTC' AT TIME ZONE 'America/Mexico_City') = :day", { day: filters.day });
     }
 
     qb.orderBy('report.createdAt', 'DESC');
@@ -140,13 +140,13 @@ export class ReportRepository implements IReportRepository {
       .where('report.neighborhood IS NOT NULL'); // Only include reports with a neighborhood
 
     if (filters?.year) {
-      qb.andWhere('EXTRACT(YEAR FROM report.createdAt) = :year', { year: filters.year });
+      qb.andWhere("EXTRACT(YEAR FROM report.createdAt AT TIME ZONE 'UTC' AT TIME ZONE 'America/Mexico_City') = :year", { year: filters.year });
     }
     if (filters?.month) {
-      qb.andWhere('EXTRACT(MONTH FROM report.createdAt) = :month', { month: filters.month });
+      qb.andWhere("EXTRACT(MONTH FROM report.createdAt AT TIME ZONE 'UTC' AT TIME ZONE 'America/Mexico_City') = :month", { month: filters.month });
     }
     if (filters?.day) {
-      qb.andWhere('EXTRACT(DAY FROM report.createdAt) = :day', { day: filters.day });
+      qb.andWhere("EXTRACT(DAY FROM report.createdAt AT TIME ZONE 'UTC' AT TIME ZONE 'America/Mexico_City') = :day", { day: filters.day });
     }
 
     const stats = await qb
