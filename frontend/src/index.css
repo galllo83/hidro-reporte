@@ -1,3 +1,19 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Override Leaflet Draw Toolbar icon to display text */
+.leaflet-draw-draw-polygon {
+    background-image: none !important;
+    width: auto !important;
+    padding: 0 12px !important;
+    line-height: 30px !important;
+    text-decoration: none !important;
+    color: #374151 !important;
+    font-weight: 600 !important;
+    font-family: inherit;
+    font-size: 13px !important;
+}
+.leaflet-draw-draw-polygon::after {
+    content: 'Crear polígono';
+}
