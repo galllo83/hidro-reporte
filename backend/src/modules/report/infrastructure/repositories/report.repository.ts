@@ -130,7 +130,7 @@ export class ReportRepository implements IReportRepository {
     return this.mapToDomain(updatedEntity!);
   }
 
-  async getReportStatsByZone(filters?: { day?: number, month?: number, year?: number }): Promise<any[]> {
+  async getReportStatsByZone(filters?: { day?: number, month?: number, year?: number, zoneName?: string }): Promise<any[]> {
     // TypeORM query to count reports grouped by polygon (zone) and type
     const qb = this.reportRepository
       .createQueryBuilder('report')
@@ -147,6 +147,9 @@ export class ReportRepository implements IReportRepository {
     }
     if (filters?.day) {
       qb.andWhere("EXTRACT(DAY FROM report.createdAt AT TIME ZONE 'UTC' AT TIME ZONE 'America/Mexico_City') = :day", { day: filters.day });
+    }
+    if (filters?.zoneName) {
+      qb.andWhere("COALESCE(zone.name, 'Desconocido') ILIKE :zoneName", { zoneName: `%${filters.zoneName}%` });
     }
 
     const stats = await qb

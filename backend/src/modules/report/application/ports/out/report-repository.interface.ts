@@ -7,5 +7,5 @@ export interface IReportRepository {
   findByUserId(userId: string, filters?: { day?: number, month?: number, year?: number }): Promise<ReportModel[]>;
   findById(id: string): Promise<ReportModel | null>;
   update(id: string, data: Partial<ReportModel>): Promise<ReportModel>;
-  getReportStatsByZone(filters?: { day?: number, month?: number, year?: number }): Promise<any[]>;
+  getReportStatsByZone(filters?: { day?: number, month?: number, year?: number, zoneName?: string }): Promise<any[]>;
 }

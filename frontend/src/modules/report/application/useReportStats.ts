@@ -5,6 +5,7 @@ interface ReportFilters {
     day?: number;
     month?: number;
     year?: number;
+    zoneName?: string;
 }
 
 export const useReportStats = () => {
