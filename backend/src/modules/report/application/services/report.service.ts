@@ -78,7 +78,7 @@ export class ReportService implements IReportService {
     return this.reportRepository.update(reportId, { isAttended: true });
   }
 
-  async getReportStatsByZone(filters?: { day?: number, month?: number, year?: number }): Promise<any[]> {
+  async getReportStatsByZone(filters?: { day?: number, month?: number, year?: number, zoneName?: string }): Promise<any[]> {
     return this.reportRepository.getReportStatsByZone(filters);
   }
 }

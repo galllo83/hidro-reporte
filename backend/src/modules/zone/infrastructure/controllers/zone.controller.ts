@@ -8,42 +8,50 @@ import {
   Delete,
   UseGuards,
 } from '@nestjs/common';
+import { ApiTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 import { ZoneService } from '../../application/services/zone.service';
 import { JwtAuthGuard } from '../../../auth/infrastructure/guards/jwt-auth.guard';
 import { RolesGuard } from '../../../auth/infrastructure/guards/roles.guard';
 import { Roles } from '../../../auth/infrastructure/decorators/roles.decorator';
 import { Role } from '../../../../helpers/enums/role.enum';
+import { CreateZoneDto, UpdateZoneDto } from '../../application/dto/zone.dto';
 
+@ApiTags('Zones')
+@ApiBearerAuth()
 @Controller('zones')
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class ZoneController {
-  constructor(private readonly zoneService: ZoneService) {}
+  constructor(private readonly zoneService: ZoneService) { }
 
   @Post()
-  @Roles(Role.ADMIN) // Only admins can draw/save new zones
-  create(@Body() createZoneDto: any) {
+  @Roles(Role.ADMIN)
+  @ApiOperation({ summary: 'Create a new zone polygon (Admin only)' })
+  create(@Body() createZoneDto: CreateZoneDto) {
     return this.zoneService.create(createZoneDto);
   }
 
   @Get()
-  // Both admins and citizens can see the zones
+  @ApiOperation({ summary: 'Get all zones (Admins and Citizens)' })
   findAll() {
     return this.zoneService.findAll();
   }
 
   @Get(':id')
+  @ApiOperation({ summary: 'Get a zone by ID' })
   findOne(@Param('id') id: string) {
     return this.zoneService.findOne(id);
   }
 
   @Put(':id')
   @Roles(Role.ADMIN)
-  update(@Param('id') id: string, @Body() updateZoneDto: any) {
+  @ApiOperation({ summary: 'Update a zone (Admin only)' })
+  update(@Param('id') id: string, @Body() updateZoneDto: UpdateZoneDto) {
     return this.zoneService.update(id, updateZoneDto);
   }
 
   @Delete(':id')
   @Roles(Role.ADMIN)
+  @ApiOperation({ summary: 'Delete a zone (Admin only)' })
   remove(@Param('id') id: string) {
     return this.zoneService.remove(id);
   }

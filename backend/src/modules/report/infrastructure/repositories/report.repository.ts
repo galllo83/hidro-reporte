@@ -95,13 +95,13 @@ export class ReportRepository implements IReportRepository {
       .orderBy('report.createdAt', 'DESC');
 
     if (filters?.year) {
-      queryBuilder.andWhere('EXTRACT(YEAR FROM report.createdAt) = :year', { year: filters.year });
+      queryBuilder.andWhere("EXTRACT(YEAR FROM report.createdAt AT TIME ZONE 'UTC' AT TIME ZONE 'America/Mexico_City') = :year", { year: filters.year });
     }
     if (filters?.month) {
-      queryBuilder.andWhere('EXTRACT(MONTH FROM report.createdAt) = :month', { month: filters.month });
+      queryBuilder.andWhere("EXTRACT(MONTH FROM report.createdAt AT TIME ZONE 'UTC' AT TIME ZONE 'America/Mexico_City') = :month", { month: filters.month });
     }
     if (filters?.day) {
-      queryBuilder.andWhere('EXTRACT(DAY FROM report.createdAt) = :day', { day: filters.day });
+      queryBuilder.andWhere("EXTRACT(DAY FROM report.createdAt AT TIME ZONE 'UTC' AT TIME ZONE 'America/Mexico_City') = :day", { day: filters.day });
     }
 
     const entities = await queryBuilder.getMany();
