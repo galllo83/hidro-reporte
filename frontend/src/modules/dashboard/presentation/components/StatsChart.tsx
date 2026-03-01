@@ -193,23 +193,22 @@ export const StatsChart = () => {
                         <p>No hay datos suficientes para graficar</p>
                     </div>
                 ) : (
-                    <div style={{ height: `${Math.max(300, stats.length * 60)}px`, width: '100%' }}>
+                    <div style={{ height: '100%', width: '100%' }}>
                         <ResponsiveContainer width="100%" height="100%">
                             <BarChart
                                 data={stats}
-                                layout="vertical"
                                 margin={{ top: 20, right: 30, left: 10, bottom: 5 }}
                             >
-                                <XAxis type="number" stroke="#4b5563" tick={{ fill: '#9ca3af', fontSize: 12 }} />
-                                <YAxis type="category" dataKey="neighborhood" stroke="#4b5563" tick={{ fill: '#9ca3af', fontSize: 12 }} width={120} />
+                                <XAxis dataKey="neighborhood" stroke="#4b5563" tick={{ fill: '#9ca3af', fontSize: 12 }} />
+                                <YAxis stroke="#4b5563" tick={{ fill: '#9ca3af', fontSize: 12 }} />
                                 <Tooltip
                                     cursor={{ fill: 'rgba(255, 255, 255, 0.05)' }}
                                     contentStyle={{ backgroundColor: '#111928', borderColor: '#374151', borderRadius: '12px', color: '#f3f4f6' }}
                                 />
                                 <Legend wrapperStyle={{ paddingTop: '20px' }} />
-                                <Bar name="Llegó el Agua" dataKey="SUPPLY_RESTORED" stackId="a" fill="#06b6d4" radius={[0, 4, 4, 0]} />
-                                <Bar name="Se Fue el Agua" dataKey="SUPPLY_ENDED" stackId="a" fill="#ef4444" />
-                                <Bar name="Fuga de Agua" dataKey="LEAK_REPORTED" stackId="a" fill="#eab308" radius={[0, 4, 4, 0]} />
+                                <Bar name="Llegó el Agua" dataKey="SUPPLY_RESTORED" fill="#06b6d4" radius={[4, 4, 0, 0]} />
+                                <Bar name="Se Fue el Agua" dataKey="SUPPLY_ENDED" fill="#ef4444" radius={[4, 4, 0, 0]} />
+                                <Bar name="Fuga de Agua" dataKey="LEAK_REPORTED" fill="#eab308" radius={[4, 4, 0, 0]} />
                             </BarChart>
                         </ResponsiveContainer>
                     </div>
