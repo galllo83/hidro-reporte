@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 import { MapContainer, TileLayer, FeatureGroup, GeoJSON, Popup, Marker, useMap } from 'react-leaflet';
 import { EditControl } from 'react-leaflet-draw';
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, Input, useDisclosure } from '@heroui/react';
-import { CheckCircle2, Search, Navigation } from 'lucide-react';
+import { CheckCircle2, Search, Navigation, Plus, Minus } from 'lucide-react';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-draw/dist/leaflet.draw.css';
 
@@ -75,6 +75,28 @@ const ZonePopup = ({ zone }: { zone: Zone }) => {
                     </div>
                 </div>
             )}
+        </div>
+    );
+};
+
+const ZoomControls = () => {
+    const map = useMap();
+    return (
+        <div className="absolute bottom-6 left-4 sm:left-14 z-[1000] flex flex-col gap-1 pointer-events-auto">
+            <button
+                onClick={() => map.zoomIn()}
+                title="Acercar"
+                className="w-9 h-9 flex items-center justify-center bg-[#1f2937]/90 backdrop-blur border border-gray-600 text-gray-200 hover:text-cyan-400 hover:bg-gray-700 rounded-t-lg shadow-lg transition-colors outline-none cursor-pointer"
+            >
+                <Plus className="w-4 h-4" />
+            </button>
+            <button
+                onClick={() => map.zoomOut()}
+                title="Alejar"
+                className="w-9 h-9 flex items-center justify-center bg-[#1f2937]/90 backdrop-blur border border-gray-600 border-t-0 text-gray-200 hover:text-cyan-400 hover:bg-gray-700 rounded-b-lg shadow-lg transition-colors outline-none cursor-pointer"
+            >
+                <Minus className="w-4 h-4" />
+            </button>
         </div>
     );
 };
@@ -269,6 +291,7 @@ export const InteractiveMap = () => {
                 zoomControl={false}
             >
                 <MapControls />
+                <ZoomControls />
                 <TileLayer
                     url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
