@@ -19,9 +19,14 @@ export const useRegister = () => {
 
             return response.user;
         } catch (err: unknown) {
-            const typedErr = err as { response?: { data?: { message?: string | string[] } } };
-            const msg = typedErr.response?.data?.message || 'Error de conexión con el servidor. Por favor, intenta de nuevo más tarde.';
-            setError(Array.isArray(msg) ? msg[0] : msg);
+            const typedErr = err as Error & { status?: number };
+            let msg: string;
+            if (typedErr.status === 409) {
+                msg = 'El correo ya está registrado. Intenta con otro.';
+            } else {
+                msg = typedErr.message || 'Error de conexión con el servidor. Por favor, intenta de nuevo más tarde.';
+            }
+            setError(msg);
             throw typedErr;
         } finally {
             setIsLoading(false);

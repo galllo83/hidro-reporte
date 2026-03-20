@@ -19,7 +19,7 @@ export class ReportOrmEntity {
   @Column({ name: 'user_id' })
   userId: string;
 
-  @ManyToOne(() => UserOrmEntity)
+  @ManyToOne(() => UserOrmEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })
   user: UserOrmEntity;
 

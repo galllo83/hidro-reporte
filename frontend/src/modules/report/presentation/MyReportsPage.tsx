@@ -1,14 +1,22 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUserReports } from '../application/useUserReports';
-import { ArrowLeft, Calendar, Filter, Droplet, MapPin } from 'lucide-react';
+import { ArrowLeft, Calendar, Filter, Droplet, MapPin, CalendarCheck } from 'lucide-react';
 
 export const MyReportsPage = () => {
     const navigate = useNavigate();
     const { reports, isLoading, error, fetchReports } = useUserReports();
-    const [day, setDay] = useState('');
-    const [month, setMonth] = useState('');
-    const [year, setYear] = useState('');
+    const today = new Date();
+    const [day, setDay] = useState(String(today.getDate()));
+    const [month, setMonth] = useState(String(today.getMonth() + 1));
+    const [year, setYear] = useState(String(today.getFullYear()));
+
+    const goToToday = () => {
+        const now = new Date();
+        setDay(String(now.getDate()));
+        setMonth(String(now.getMonth() + 1));
+        setYear(String(now.getFullYear()));
+    };
 
     useEffect(() => {
         fetchReports({
@@ -115,10 +123,20 @@ export const MyReportsPage = () => {
                             className="flex-1 bg-black/40 border border-gray-800 text-gray-200 text-sm rounded-lg focus:ring-cyan-500 focus:border-cyan-500 block p-2.5 outline-none transition-colors"
                         >
                             <option value="">Año</option>
-                            {[2024, 2025, 2026, 2027].map(y => (
+                            {Array.from({ length: new Date().getFullYear() - 2023 }, (_, i) => 2024 + i).map(y => (
                                 <option key={y} value={y}>{y}</option>
                             ))}
                         </select>
+
+                        {/* Today Button */}
+                        <button
+                            onClick={goToToday}
+                            title="Ver reportes de hoy"
+                            className="flex items-center gap-1.5 bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/30 hover:border-cyan-400/60 text-cyan-400 hover:text-cyan-300 text-sm font-semibold px-4 py-2.5 rounded-lg transition-all whitespace-nowrap"
+                        >
+                            <CalendarCheck className="w-4 h-4" />
+                            Hoy
+                        </button>
                     </div>
                 </div>
 

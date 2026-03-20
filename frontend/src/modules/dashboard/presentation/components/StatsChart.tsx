@@ -2,7 +2,7 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } fro
 import { useReportStats } from '../../../report/application/useReportStats';
 import { useZones } from '../../application/useZones';
 import { useEffect, useState, useRef } from 'react';
-import { BarChart3, Search, ChevronDown } from 'lucide-react';
+import { BarChart3, Search, ChevronDown, CalendarCheck } from 'lucide-react';
 
 export const StatsChart = () => {
     // Default to today
@@ -175,6 +175,21 @@ export const StatsChart = () => {
                                 <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" /></svg>
                             </div>
                         </div>
+
+                        {/* Today Button */}
+                        <button
+                            onClick={() => {
+                                const now = new Date();
+                                setSelectedDay(now.getDate());
+                                setSelectedMonth(now.getMonth() + 1);
+                                setSelectedYear(now.getFullYear());
+                            }}
+                            title="Ir a la fecha de hoy"
+                            className="flex items-center gap-1.5 bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/30 hover:border-cyan-400/60 text-cyan-400 hover:text-cyan-300 text-xs font-semibold px-3 py-2 rounded-xl transition-all whitespace-nowrap"
+                        >
+                            <CalendarCheck className="w-3.5 h-3.5" />
+                            Hoy
+                        </button>
                     </div>
                 </div>
             </div>

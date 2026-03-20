@@ -4,57 +4,47 @@ export const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/ap
 
 export const authRepository = {
     register: async (credentials: RegisterCredentials): Promise<AuthResponse> => {
-        try {
-            // 1. Send registration payload
-            const registerRes = await fetch(`${API_URL}/auth/register`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(credentials),
-            });
+        // 1. Send registration payload
+        const registerRes = await fetch(`${API_URL}/auth/register`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(credentials),
+        });
 
-            if (!registerRes.ok) {
-                const errorData = await registerRes.json().catch(() => null);
-                throw new Error(errorData?.message || 'Error al registrar usuario. Intente con otro correo.');
-            }
-
-            const { accessToken } = await registerRes.json();
-
-            // Store token tentatively for the /me request
-            localStorage.setItem('auth_token', accessToken);
-
-            // 2. Fetch User Profile using the token to confirm identity
-            const meRes = await fetch(`${API_URL}/auth/me`, {
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${accessToken}`,
-                    'Content-Type': 'application/json',
-                }
-            });
-
-            if (!meRes.ok) {
-                localStorage.removeItem('auth_token'); // Cleanup if /me fails
-                throw new Error('Error al obtener el perfil de usuario registrado');
-            }
-
-            const user: User = await meRes.json();
-
-            return {
-                user,
-                token: accessToken
-            };
-        } catch (error: unknown) {
-            const typedErr = error as { response?: { data?: { message?: string | string[] } } };
-            let errorMsg = 'Error al registrar el usuario';
-
-            if (typedErr.response?.data?.message) {
-                const messageData = typedErr.response.data.message;
-                errorMsg = Array.isArray(messageData) ? messageData.join(', ') : messageData;
-            }
-
-            throw new Error(errorMsg);
+        if (!registerRes.ok) {
+            const errorData = await registerRes.json().catch(() => null);
+            const err = new Error(errorData?.message || 'Error al registrar usuario.') as Error & { status: number };
+            err.status = registerRes.status;
+            throw err;
         }
+
+        const { accessToken } = await registerRes.json();
+
+        // Store token tentatively for the /me request
+        localStorage.setItem('auth_token', accessToken);
+
+        // 2. Fetch User Profile using the token to confirm identity
+        const meRes = await fetch(`${API_URL}/auth/me`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${accessToken}`,
+                'Content-Type': 'application/json',
+            }
+        });
+
+        if (!meRes.ok) {
+            localStorage.removeItem('auth_token');
+            throw new Error('Error al obtener el perfil de usuario registrado');
+        }
+
+        const user: User = await meRes.json();
+
+        return {
+            user,
+            token: accessToken
+        };
     },
 
     login: async (credentials: LoginCredentials): Promise<AuthResponse> => {
